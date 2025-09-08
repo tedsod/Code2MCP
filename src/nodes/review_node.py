@@ -1,6 +1,4 @@
 # Review Node - Code review and error fixing node
-
-#updateupdate
 from __future__ import annotations
 import json
 import os
@@ -9,6 +7,23 @@ from typing import Dict, Any
 from ..utils import setup_logging, write_file, ensure_directory, get_llm_service
 
 logger = setup_logging()
+
+def _retry_generate_text(llm_service, user_prompt: str, system_prompt: str | None = None, retries: int = 2) -> str:
+    delay = 1.0
+    last = ""
+    for i in range(retries + 1):
+        try:
+            resp = llm_service.generate_text(user_prompt, system_prompt) if system_prompt is not None else llm_service.generate_text(user_prompt)
+            if resp:
+                return resp
+            last = ""
+        except Exception as e:
+            last = str(e)
+        if i < retries:
+            import time as _t
+            _t.sleep(delay)
+            delay = min(delay * 2, 4.0)
+    return last
 
 def _intelligent_error_analysis(state: Dict[str, Any]) -> Dict[str, Any]:
     try:
@@ -52,7 +67,7 @@ Please return JSON format analysis:
     "summary": "Error analysis and repair suggestions"
 }}"""
         
-        response = llm_service.generate_text(user_prompt, system_prompt)
+        response = _retry_generate_text(llm_service, user_prompt, system_prompt)
         
         try:
             json_match = re.search(r'\{.*\}', response, re.DOTALL)
@@ -138,7 +153,7 @@ Current file content end
 
 Please return unified patch or complete replacement content. {hint}"""
 
-        response = llm_service.generate_text(user_prompt, system_prompt)
+        response = _retry_generate_text(llm_service, user_prompt, system_prompt)
         if not response:
             logger.warning("LLM did not return a response")
             return False
@@ -166,7 +181,7 @@ Please return unified patch or complete replacement content. {hint}"""
             try:
                 ast.parse(new_text)
             except Exception as e:
-                retry_response = llm_service.generate_text(f"{user_prompt}\n\nLast generation did not conform to protocol/syntax error: {e}\nPlease strictly follow the protocol and output only complete replacement.", system_prompt)
+                retry_response = _retry_generate_text(llm_service, f"{user_prompt}\n\nLast generation did not conform to protocol/syntax error: {e}\nPlease strictly follow the protocol and output only complete replacement.", system_prompt)
                 if retry_response:
                     retry_file_path = _extract_file_path(retry_response) or file_path
                     if not retry_file_path:
@@ -410,6 +425,17 @@ def review_node(state: Dict[str, Any]) -> Dict[str, Any]:
         if fix_success:
             logger.info("Automatic fix successful!")
             state["fix_retry_count"] = 0
+            state["fix_applied"] = True
+            summary = {
+                "task": "runtime_fix",
+                "errors": error_analysis,
+                "root_cause": error_analysis.get("summary", ""),
+                "fixes": "applied",
+                "deps_change": False,
+                "risks": [],
+                "next_focus": "re-run tests"
+            }
+            state["loop_summary"] = summary
             state["status"] = "running"
             return state
         else:
@@ -423,7 +449,16 @@ def review_node(state: Dict[str, Any]) -> Dict[str, Any]:
             state["status"] = "failed"
             return state
 
-        logger.info(f"Direct fix failed, preparing for {current_fix_retries}th automatic fix/retry")
+        logger.info(f"Direct fix failed, preparing retry {current_fix_retries}")
+        state["loop_summary"] = {
+            "task": "runtime_fix",
+            "errors": error_analysis,
+            "root_cause": error_analysis.get("summary", ""),
+            "fixes": "failed",
+            "deps_change": False,
+            "risks": ["further regeneration may be needed"],
+            "next_focus": "analyze generation or deps"
+        }
         if "run_result" in state:
             state["previous_run_results"] = state.get("previous_run_results", [])
             state["previous_run_results"].append(state["run_result"])
@@ -447,6 +482,15 @@ def review_node(state: Dict[str, Any]) -> Dict[str, Any]:
     else:
         state["fix_retry_count"] = 0
         state["generation_retry_count"] = state.get("generation_retry_count", 0)
+        state["loop_summary"] = {
+            "task": "runtime_ok",
+            "errors": {},
+            "root_cause": "",
+            "fixes": "none",
+            "deps_change": False,
+            "risks": [],
+            "next_focus": "finalize"
+        }
 
     state["status"] = "running"
     state["workflow_status"] = state.get("workflow_status", "running")

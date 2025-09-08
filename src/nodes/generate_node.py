@@ -6,6 +6,23 @@ from typing import Dict, Any
 from ..utils import setup_logging, ensure_directory, write_file, get_llm_service
 
 logger = setup_logging()
+
+def _retry_generate_text(llm_service, user_prompt: str, system_prompt: str | None = None, retries: int = 2) -> str:
+    delay = 1.0
+    last = ""
+    for i in range(retries + 1):
+        try:
+            resp = llm_service.generate_text(user_prompt, system_prompt) if system_prompt is not None else llm_service.generate_text(user_prompt)
+            if resp:
+                return resp
+            last = ""
+        except Exception as e:
+            last = str(e)
+        if i < retries:
+            import time as _t
+            _t.sleep(delay)
+            delay = min(delay * 2, 4.0)
+    return last
 def _generate_mcp_py() -> str:
     content = """
 \"\"\"
@@ -112,7 +129,7 @@ def _detect_project_type(analysis_result: Dict[str, Any]) -> str:
         logger.warning(f"Project type detection failed: {e}")
         return "Unknown"
 
-def _generate_mcp_service(analysis_result: Dict[str, Any], retry_info: Dict[str, Any] = None) -> str:
+def _generate_mcp_service(analysis_result: Dict[str, Any], retry_info: Dict[str, Any] = None, loop_summary: Dict[str, Any] | None = None) -> str:
     try:
         llm_service = get_llm_service()
         
@@ -236,7 +253,8 @@ Confidence: {error_analysis.get('confidence', 0):.2f}
             
             base_prompt += retry_guidance
 
-        user_prompt = base_prompt + """
+        prefix = f"Loop summary: {loop_summary}\n\n" if loop_summary else ""
+        user_prompt = prefix + base_prompt + """
 
 Decorator Usage Guidelines:
 - Use @mcp.tool(name="tool_name", description="Tool description") format
@@ -245,7 +263,13 @@ Decorator Usage Guidelines:
 - function docstring provides detailed parameter and return value descriptions
 
 Note: Directly return Python code, do not include any Markdown format. Please generate a rich, high-quality MCP (Model Context Protocol) service, fully utilizing all functions from the analysis result!"""
-        generated_code = llm_service.generate_text(user_prompt, system_prompt)
+        if state := locals().get('state'):
+            loop_summary = state.get("loop_summary") if isinstance(state, dict) else None
+        else:
+            loop_summary = None
+        if loop_summary:
+            user_prompt = f"Loop summary: {loop_summary}\n\n" + user_prompt
+        generated_code = _retry_generate_text(llm_service, user_prompt, system_prompt)
         if not generated_code or len(generated_code.strip()) < 100:
             logger.warning("LLM code generation failed, using fallback template")
             return _generate_mcp_service_fallback(analysis_result)
@@ -525,7 +549,7 @@ if __name__ == "__main__":
     return content
 
 # Generate import mode adapter
-def _generate_adapter_import(analysis_result: Dict[str, Any]) -> str:
+def _generate_adapter_import(analysis_result: Dict[str, Any], loop_summary: Dict[str, Any] | None = None) -> str:
     """Generate Import mode adapter code using LLM"""
     try:
         llm_service = get_llm_service()
@@ -536,7 +560,8 @@ Please generate Python code directly, do not include any Markdown tags, code blo
 
 Focus on generating clean, functional Python code that follows best practices."""
         
-        user_prompt = f"""Generate Import mode adapter code for MCP plugin:
+        prefix = f"Loop summary: {loop_summary}\n\n" if loop_summary else ""
+        user_prompt = prefix + f"""Generate Import mode adapter code for MCP plugin:
 
 Analysis result: {analysis_result}
 
@@ -588,7 +613,7 @@ Code structure requirements:
 
 Note: Directly return Python code, do not include any Markdown format. The class name must be Adapter. The code must be clear and readable, with a reasonable structure. Please generate a rich, high-quality adapter, fully utilizing all functions from the analysis result!"""
         
-        generated_code = llm_service.generate_text(user_prompt, system_prompt)
+        generated_code = _retry_generate_text(llm_service, user_prompt, system_prompt)
         if not generated_code or len(generated_code.strip()) < 100:
             logger.warning("LLM adapter code generation failed, using fallback template")
             return _generate_adapter_import_fallback(analysis_result)
@@ -706,7 +731,7 @@ class Adapter:
 """
     return content
 
-def _generate_adapter_cli(analysis_result: Dict[str, Any]) -> str:
+def _generate_adapter_cli(analysis_result: Dict[str, Any], loop_summary: Dict[str, Any] | None = None) -> str:
     """Generate CLI mode adapter code using LLM"""
     try:
         llm_service = get_llm_service()
@@ -717,7 +742,8 @@ Please generate Python code directly, do not include any Markdown tags, code blo
 
 Focus on generating clean, functional Python code that follows best practices."""
         
-        user_prompt = f"""Generate CLI mode adapter code for MCP plugin:
+        prefix = f"Loop summary: {loop_summary}\n\n" if loop_summary else ""
+        user_prompt = prefix + f"""Generate CLI mode adapter code for MCP plugin:
 
 Analysis result: {analysis_result}
 
@@ -731,7 +757,7 @@ Requirements:
 
 Note: Directly return Python code, do not include any Markdown format."""
         
-        generated_code = llm_service.generate_text(user_prompt, system_prompt)
+        generated_code = _retry_generate_text(llm_service, user_prompt, system_prompt)
         if not generated_code or len(generated_code.strip()) < 100:
             logger.warning("LLM CLI adapter code generation failed, using fallback template")
             return _generate_adapter_cli_fallback(analysis_result)
@@ -852,7 +878,7 @@ pydantic>=2.0.0
     return content
 
 
-def _generate_readme_mcp(analysis_result: Dict[str, Any]) -> str:
+def _generate_readme_mcp(analysis_result: Dict[str, Any], loop_summary: Dict[str, Any] | None = None) -> str:
     """Generate README document using LLM"""
     try:
         llm_service = get_llm_service()
@@ -863,7 +889,8 @@ Please generate Markdown documentation directly, do not include any code block t
 
 Focus on creating clear, well-structured Markdown documentation."""
         
-        user_prompt = f"""Generate MCP plugin README:
+        prefix = f"Loop summary: {loop_summary}\n\n" if loop_summary else ""
+        user_prompt = prefix + f"""Generate MCP plugin README:
 
 Analysis result: {analysis_result}
 
@@ -876,7 +903,7 @@ Requirements:
 
 Note: Directly return Markdown document content, do not include any code block tags."""
         
-        generated_doc = llm_service.generate_text(user_prompt, system_prompt)
+        generated_doc = _retry_generate_text(llm_service, user_prompt, system_prompt)
         
         if not generated_doc or len(generated_doc.strip()) < 100:
             logger.warning("LLM README generation failed, using fallback template")
@@ -1098,14 +1125,15 @@ def generate_node(state: Dict[str, Any]) -> Dict[str, Any]:
             "specific_fixes": []
         }
     
-    write_file(service_path, _strip_code_fences(_generate_mcp_service(analysis_pruned, retry_info)))
+    loop_summary = state.get("loop_summary")
+    write_file(service_path, _strip_code_fences(_generate_mcp_service(analysis_pruned, retry_info, loop_summary)))
     files["mcp_output/mcp_plugin/mcp_service.py"] = service_path
     
     adapter_path = os.path.join(mcp_plugin_dir, "adapter.py")
     if adapter_mode == "import":
-        adapter_content = _generate_adapter_import(analysis_pruned)
+        adapter_content = _generate_adapter_import(analysis_pruned, loop_summary)
     elif adapter_mode == "cli":
-        adapter_content = _generate_adapter_cli(analysis_pruned)
+        adapter_content = _generate_adapter_cli(analysis_pruned, loop_summary)
     else:
         adapter_content = _generate_adapter_blackbox(analysis_pruned)
     
@@ -1137,7 +1165,7 @@ if __name__ == "__main__":
     
     readme_path = os.path.join(mcp_output_dir, "README_MCP.md")
     analysis["repository_name"] = repo.get("name", "unknown")
-    write_file(readme_path, _generate_readme_mcp(analysis_pruned))
+    write_file(readme_path, _generate_readme_mcp(analysis_pruned, loop_summary))
     files["mcp_output/README_MCP.md"] = readme_path
     
     test_basic_path = os.path.join(tests_mcp_dir, "test_mcp_basic.py")

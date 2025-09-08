@@ -62,7 +62,6 @@ def route_after_review(state: Dict[str, Any]) -> str:
         state["status"] = "failed"
         return END
     
-
     error_analysis = state.get("error_analysis", {})
     run_result = state.get("run_result", {})
     
@@ -81,7 +80,6 @@ def route_after_review(state: Dict[str, Any]) -> str:
         if fix_retry_count < max_fix_retries:
             return "review"  
         
-
         if should_retry_generation(state, MAX_GENERATION_RETRIES):
             return "generate"
         else:
