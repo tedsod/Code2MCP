@@ -45,7 +45,7 @@ class Adapter:
         except Exception as e:
             return {"status": "error", "message": f"Failed to create Configuration instance: {str(e)}"}
 
-    # ----------------------------- Modeling Module -----------------------------
+    # ---------------------------- Modeling Module -----------------------------
 
     def create_modeling_instance(self, model_path):
         """

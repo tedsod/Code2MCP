@@ -58,7 +58,7 @@ class Adapter:
             "MilvusDB": MilvusDB is not None,
         }
 
-    # -------------------- Agent Methods --------------------
+    # ------------------- Agent Methods --------------------
 
     def create_base_agent(self, **kwargs):
         """
