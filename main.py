@@ -98,13 +98,13 @@ async def main():
     parser.add_argument("--config", "-c", help="Configuration file path")
     provider = os.getenv("MODEL_PROVIDER", "openai").lower()
     if provider == "deepseek":
-        default_deepwiki_model = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+        default_deepwiki_model = os.getenv("DEEPSEEK_MODEL", "deepseek-v3")
     elif provider == "qwen":
-        default_deepwiki_model = os.getenv("QWEN_MODEL", "qwen-turbo")
+        default_deepwiki_model = os.getenv("QWEN_MODEL", "qwen-3")
     elif provider == "claude":
-        default_deepwiki_model = os.getenv("CLAUDE_MODEL", "claude-3-sonnet-20240229")
+        default_deepwiki_model = os.getenv("CLAUDE_MODEL", "claude-4-sonnet")
     else:
-        default_deepwiki_model = os.getenv("DEEPWIKI_MODEL", "gpt-4o")
+        default_deepwiki_model = os.getenv("DEEPWIKI_MODEL", "gpt-5")
     
     parser.add_argument("--deepwiki-model", default=default_deepwiki_model, help=f"DeepWiki model to use (default: {default_deepwiki_model})")
 

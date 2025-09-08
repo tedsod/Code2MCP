@@ -74,7 +74,7 @@ def generate_fixed_backbone(input_data: dict):
         dict: Contains success/result/error fields.
     """
     try:
-        # result = lm_design.generate_fixed_backbone(input_data)
+        result = lm_design.generate_fixed_backbone(input_data)
         return {"success": False, "result": None, "error": "This feature is currently unavailable"}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}

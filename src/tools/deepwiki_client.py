@@ -10,7 +10,7 @@ from ..utils import setup_logging
 logger = setup_logging("INFO")
 
 class DeepWikiClient:
-    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o"):
+    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-5"):
         self.model = model
         self.server_url = "https://deepwiki.com"
         self.fallback_enabled = True
@@ -345,11 +345,10 @@ Please provide detailed analysis and recommendations.
             return analysis_result
             
         except Exception as e:
-            logger.error(f"Repository analysis failed: {e}")
             return {
                 "repo_url": repo_url,
                 "repo_name": repo_name,
-                "error": str(e),
+                "error": "DeepWiki analysis failed",
                 "model": self.model,
                 "source": "llm_direct_analysis",
                 "success": False
@@ -382,13 +381,13 @@ def get_deepwiki_client(api_key: Optional[str] = None, model: Optional[str] = No
     if not model:
         provider = os.getenv("MODEL_PROVIDER", "openai").lower()
         if provider == "deepseek":
-            model = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+            model = os.getenv("DEEPSEEK_MODEL", "deepseek-v3")
         elif provider == "qwen":
-            model = os.getenv("QWEN_MODEL", "qwen-turbo")
+            model = os.getenv("QWEN_MODEL", "qwen-3")
         elif provider == "claude":
-            model = os.getenv("CLAUDE_MODEL", "claude-3.5-sonnet")
+            model = os.getenv("CLAUDE_MODEL", "claude-4-sonnet")
         else:
-            model = os.getenv("OPENAI_MODEL", "gpt-4o")
+            model = os.getenv("OPENAI_MODEL", "gpt-5")
     
 
     

@@ -300,7 +300,8 @@ def analysis_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
     deepwiki_analysis = {"status": "skipped"}
     deepwiki_model = state.get("options", {}).get("deepwiki_model")
-    if deepwiki_model:
+    disable_deepwiki = os.getenv("DISABLE_DEEPWIKI", "false").lower() == "true"
+    if deepwiki_model and not disable_deepwiki:
         try:
             model = deepwiki_model
             deepwiki_client = get_deepwiki_client(model=model)
@@ -308,9 +309,7 @@ def analysis_node(state: Dict[str, Any]) -> Dict[str, Any]:
             deepwiki_analysis = deepwiki_client.analyze_repository(repo_url, repo_name)
             logger.info("DeepWiki analysis completed")
         except Exception as e:
-            logger.warning(f"DeepWiki analysis failed: {e}")
-            state.setdefault("warnings", []).append(f"DeepWiki analysis failed: {e}")
-            deepwiki_analysis = {"status": "failed", "error": str(e)}
+            deepwiki_analysis = {"status": "failed", "error": "DeepWiki analysis failed"}
     else:
         logger.info("DeepWiki analysis skipped (model not configured)")
     

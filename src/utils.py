@@ -236,7 +236,7 @@ def get_model_config(provider: str = None) -> ModelConfig:
     if provider == "openai":
         api_key = os.getenv("OPENAI_API_KEY")
         base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
-        model_version = os.getenv("OPENAI_MODEL", "gpt-4o")
+        model_version = os.getenv("OPENAI_MODEL", "gpt-5")
     elif provider == "deepseek":
         api_key = os.getenv("DEEPSEEK_API_KEY")
         base_url = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
@@ -244,15 +244,15 @@ def get_model_config(provider: str = None) -> ModelConfig:
     elif provider == "qwen":
         api_key = os.getenv("QWEN_API_KEY")
         base_url = os.getenv("QWEN_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
-        model_version = os.getenv("QWEN_MODEL", "qwen-turbo")
+        model_version = os.getenv("QWEN_MODEL", "qwen-3")
     elif provider == "claude":
         api_key = os.getenv("CLAUDE_API_KEY")
         base_url = os.getenv("CLAUDE_BASE_URL", "https://api.anthropic.com")
-        model_version = os.getenv("CLAUDE_MODEL", "claude-3-sonnet-20240229")
+        model_version = os.getenv("CLAUDE_MODEL", "claude-4-sonnet")
     elif provider == "bedrock":
         api_key = os.getenv("AWS_ACCESS_KEY_ID")
         base_url = None
-        model_version = os.getenv("BEDROCK_MODEL", "anthropic.claude-3-sonnet-20240229-v1:0")
+        model_version = os.getenv("BEDROCK_MODEL", "anthropic.claude-4-sonnet")
     elif provider == "ollama":
         api_key = None
         base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
