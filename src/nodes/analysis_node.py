@@ -4,7 +4,7 @@ import os
 import json
 import re
 from typing import Dict, Any, List
-from ..utils import setup_logging, get_llm_service, write_file
+from ..utils import setup_logging, get_llm_service, write_file, fetch_deepwiki
 from ..tools.gitingest_client import GitingestClient
 from ..tools.deepwiki_client import get_deepwiki_client
 
@@ -312,6 +312,18 @@ def analysis_node(state: Dict[str, Any]) -> Dict[str, Any]:
             deepwiki_analysis = {"status": "failed", "error": "DeepWiki analysis failed"}
     else:
         logger.info("DeepWiki analysis skipped (model not configured)")
+
+    try:
+        if repo_url:
+            dw_url = repo_url.replace("github.com", "deepwiki.com") if "github.com" in repo_url else repo_url
+            r = fetch_deepwiki(dw_url)
+            if r.get("success") and r.get("content"):
+                deepwiki_analysis = deepwiki_analysis or {}
+                deepwiki_analysis["content"] = r.get("content")
+                deepwiki_analysis["status"] = deepwiki_analysis.get("status", "ok")
+                logger.info("Jina fetch success")
+    except Exception:
+        pass
     
     logger.info("Starting LLM service...")
     llm_service = get_llm_service()

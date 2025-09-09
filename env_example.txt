@@ -1,5 +1,9 @@
 # MCP-Agent Environment Variables Configuration Example
 
+# ==================== Jina Configuration ====================
+# (Optional) Jina Reader API key for more precise repository analysis
+JINA_API_KEY=your_jina_api_key_here
+
 # ==================== LLM Configuration ====================
 # Model provider selection (openai/deepseek/qwen/claude/bedrock/ollama)
 MODEL_PROVIDER=openai
@@ -17,7 +21,7 @@ DEEPSEEK_MODEL=deepseek-v3
 # Qwen Configuration
 QWEN_API_KEY=your_qwen_api_key_here
 QWEN_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
-QWEN_MODEL=qwen-turbo
+QWEN_MODEL=qwen-3
 
 # Claude Configuration
 CLAUDE_API_KEY=your_claude_api_key_here
@@ -81,7 +85,8 @@ ANALYSIS_MIN_CHARS=500
 
 # ==================== Usage Instructions ====================
 # 1. Copy this file to .env
-# 2. Set API keys for corresponding models
+# 2. Set JINA_API_KEY (optional) for enhanced DeepWiki/web analysis
 # 3. Select model provider (MODEL_PROVIDER)
-# 4. Adjust other parameters as needed
+# 4. Set API keys for models (e.g., OPENAI_API_KEY/DEEPSEEK_API_KEY/...)
+# 5. Adjust other parameters as needed
 
