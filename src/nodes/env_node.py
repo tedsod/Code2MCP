@@ -181,7 +181,7 @@ def _llm_complete(system_prompt: str, user_prompt: str) -> str:
 def _llm_plan_commands(context: dict) -> list[list[str]]:
     if not ENABLE_LLM:
         return []
-    sys_prompt = "仅输出可直接执行的命令, 一行一条, 不要解释文本。禁止使用conda安装。优先pip wheel安装。Windows路径用\\\\或引号。"
+    sys_prompt = "Output only directly executable commands, one per line, no explanatory text. Do not use conda for installation. Prefer pip wheel installation. Use \\\\ or quotes for Windows paths."
     user_prompt = json.dumps(context, ensure_ascii=False)
     text = _llm_complete(sys_prompt, user_prompt)
     return _parse_commands(text)
@@ -189,7 +189,7 @@ def _llm_plan_commands(context: dict) -> list[list[str]]:
 def _llm_repair_commands(context: dict, error_text: str) -> list[list[str]]:
     if not ENABLE_LLM:
         return []
-    sys_prompt = "根据错误给出最小变更的修复命令, 一行一条, 不要解释。只用pip/pytest/python相关命令, 禁止conda。"
+    sys_prompt = "Provide minimal change repair commands based on errors, one per line, no explanations. Use only pip/pytest/python related commands, no conda."
     payload = {"context": context, "error": error_text[-4000:]}
     text = _llm_complete(sys_prompt, json.dumps(payload, ensure_ascii=False))
     return _parse_commands(text)
