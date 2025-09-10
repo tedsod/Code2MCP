@@ -1,8 +1,8 @@
-# MCP-Agent
+# Code2MCP
 
 ## Project Overview
 
-MCP-Agent is an automated workflow system that transforms existing Python code repositories into MCP (Model Context Protocol) services. The system follows a minimal intrusion principle, preserving the original repository's core code while only adding service-related files and tests.
+Code2MCP is an automated workflow system that transforms existing Python code repositories into MCP (Model Context Protocol) services. The system follows a minimal intrusion principle, preserving the original repository's core code while only adding service-related files and tests.
 
 ## Core Features
 
@@ -91,10 +91,13 @@ workspace/
 
 ## Successfully Converted Project Examples
 
-- **UFL**: Finite Element Method symbolic language → MCP Finite Element service
-- **dateutil**: Date and time processing library → MCP Time service
-- **TextBlob**: Natural language processing library → MCP NLP service
-- **ESM**: Protein language model → MCP Protein structure prediction service
+- **UFL**: Finite element symbolic language → MCP finite element analysis
+- **dalle-mini**: Higher-quality, controllable text-to-image → MCP image generation
+- **ESM**: Protein structure/variant scoring (real artifacts) → MCP protein analysis
+- **deep-searcher**: Query rewrite, multi-hop, credible sources → MCP search
+- **TextBlob**: Deterministic tokenize/POS/sentiment → MCP NLP preprocessing
+- **dateutil**: Correct timezones/rrule edge cases → MCP time utilities
+- **sympy**: Exact symbolic math/solve/codegen → MCP math reasoning
 
 ## Key Features
 
