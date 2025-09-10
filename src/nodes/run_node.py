@@ -9,7 +9,7 @@ from ..utils import setup_logging, write_file, get_llm_service
 
 logger = setup_logging()
 
-def _run(cmd: list[str], cwd: str | None = None, timeout: int = 120) -> tuple[int, str, str]:
+def _run(cmd: list[str], cwd: str | None = None, timeout: int = 300) -> tuple[int, str, str]:
     try:
         proc = subprocess.run(
             cmd,
@@ -48,26 +48,32 @@ def run_node(state: Dict[str, Any]) -> Dict[str, Any]:
     logger.info("Checking start_mcp.py executability in target environment")
     env_info = state.get("env", {})
     if env_info.get("type") == "conda":
-        conda_exe = os.environ.get("CONDA_EXE")
-        if not conda_exe or not os.path.exists(conda_exe):
-            from .env_node import _check_conda_available
-            if _check_conda_available():
-                conda_exe = os.environ.get("CONDA_EXE")
-        if not conda_exe or not os.path.exists(conda_exe):
-            logger.error("Conda executable not found, cannot execute conda commands")
-            state.setdefault("errors", []).append({
-                "node": "RunNode",
-                "type": "CondaNotFound",
-                "message": "Conda executable not available",
-                "action_taken": "skip_conda_commands"
-            })
-            base_cmd = ["python"]
+        # Prefer absolute python path recorded by env_node.exec_prefix to avoid slow conda run cold start
+        exec_prefix = env_info.get("exec_prefix") or []
+        if exec_prefix and os.path.isfile(exec_prefix[0]):
+            base_cmd = [exec_prefix[0]]
+            logger.info(f"Using env python: {exec_prefix[0]}")
         else:
-            conda_env_name = env_info.get("name", "")
-            logger.info(f"Using conda environment: {conda_env_name}")
-            logger.info(f"Conda executable: {conda_exe}")
-            logger.info(f"Working directory: {repo_root}")
-            base_cmd = [conda_exe, "run", "-n", conda_env_name, "--cwd", repo_root, "python"]
+            conda_exe = os.environ.get("CONDA_EXE")
+            if not conda_exe or not os.path.exists(conda_exe):
+                from .env_node import _check_conda_available
+                if _check_conda_available():
+                    conda_exe = os.environ.get("CONDA_EXE")
+            if not conda_exe or not os.path.exists(conda_exe):
+                logger.error("Conda executable not found, cannot execute conda commands")
+                state.setdefault("errors", []).append({
+                    "node": "RunNode",
+                    "type": "CondaNotFound",
+                    "message": "Conda executable not available",
+                    "action_taken": "skip_conda_commands"
+                })
+                base_cmd = ["python"]
+            else:
+                conda_env_name = env_info.get("name", "")
+                logger.info(f"Using conda environment: {conda_env_name}")
+                logger.info(f"Conda executable: {conda_exe}")
+                logger.info(f"Working directory: {repo_root}")
+                base_cmd = [conda_exe, "run", "-n", conda_env_name, "--cwd", repo_root, "python"]
     elif env_info.get("type") == "venv" and env_info.get("exec_prefix"):
         base_cmd = env_info["exec_prefix"]
     else:
@@ -132,11 +138,11 @@ def run_node(state: Dict[str, Any]) -> Dict[str, Any]:
         logger.info(f"Testing start_mcp.py in conda environment: {rel_mcp_py}")
         code, out, err = _run(base_cmd + [rel_mcp_py, "--help"], cwd=repo_root)
         if code != 0:
-            code, out, err = _run(base_cmd + [rel_mcp_py], cwd=repo_root, timeout=120)
+            code, out, err = _run(base_cmd + [rel_mcp_py], cwd=repo_root, timeout=300)
     else:
         code, out, err = _run(base_cmd + [mcp_py, "--help"], cwd=repo_root)
         if code != 0:
-            code, out, err = _run(base_cmd + [mcp_py], cwd=repo_root, timeout=120)
+            code, out, err = _run(base_cmd + [mcp_py], cwd=repo_root, timeout=300)
 
     passed = (code == 0)
     plugin_test_result = {"passed": passed, "report_path": None, "stdout": out[-1000:], "stderr": err[-1000:]}
