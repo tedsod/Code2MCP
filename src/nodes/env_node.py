@@ -132,7 +132,7 @@ def _select_llm_provider() -> dict | None:
             "name": "openai",
             "api_key": os.environ.get("OPENAI_API_KEY"),
             "base_url": os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
-            "model": os.environ.get("OPENAI_MODEL", "gpt-4o"),
+            "model": os.environ.get("OPENAI_MODEL", "gpt-5"),
         }
     if os.environ.get("DEEPSEEK_API_KEY"):
         return {
@@ -146,7 +146,7 @@ def _select_llm_provider() -> dict | None:
             "name": "anthropic",
             "api_key": os.environ.get("ANTHROPIC_API_KEY"),
             "base_url": os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com/v1"),
-            "model": os.environ.get("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022"),
+            "model": os.environ.get("ANTHROPIC_MODEL", "claude-4-sonnet"),
         }
     return None
 
