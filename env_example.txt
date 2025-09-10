@@ -1,4 +1,4 @@
-# MCP-Agent Environment Variables Configuration Example
+# Code2MCP Environment Variables Configuration Example
 
 # ==================== Jina Configuration ====================
 # (Optional) Jina Reader API key for more precise repository analysis

@@ -160,9 +160,13 @@ class DeepWikiClient:
             from bs4 import BeautifulSoup
             
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
             }
-            response = requests.get(deepwiki_url, headers=headers, timeout=10)
+            cache_bust_url = f"{deepwiki_url}?t={int(time.time())}"
+            response = requests.get(cache_bust_url, headers=headers, timeout=60)
             response.raise_for_status()
             
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -184,7 +188,12 @@ class DeepWikiClient:
                     full_content = '\n'.join(content_text[:20])
                     if len(full_content) > 2000:
                         full_content = full_content[:2000] + "..."
-                    return full_content
+                    
+                if "Loading..." in full_content and len(full_content.strip()) < 100:
+                    logger.warning("DeepWiki HTTP content still shows Loading, may need more time")
+                    return None
+                
+                return full_content
                 
                 all_text = soup.get_text(separator='\n', strip=True)
                 if all_text and len(all_text) > 100:
@@ -208,6 +217,7 @@ class DeepWikiClient:
             from selenium.webdriver.chrome.options import Options
             from selenium.webdriver.support.ui import WebDriverWait
             from selenium.webdriver.support import expected_conditions as EC
+            from selenium.common.exceptions import TimeoutException
             
             chrome_options = Options()
             chrome_options.add_argument('--headless')
@@ -216,14 +226,35 @@ class DeepWikiClient:
             chrome_options.add_argument('--disable-logging')
             chrome_options.add_argument('--disable-dev-tools')
             chrome_options.add_argument('--log-level=3')
+            chrome_options.add_argument('--disable-gpu')
+            chrome_options.add_argument('--disable-extensions')
+            chrome_options.add_argument('--disable-plugins')
+            chrome_options.add_argument('--disable-sync')
+            chrome_options.add_argument('--disable-default-apps')
             chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
             chrome_options.add_experimental_option('useAutomationExtension', False)
+            chrome_options.add_experimental_option('prefs', {
+                'profile.default_content_setting_values.notifications': 2,
+                'profile.default_content_settings.popups': 0,
+                'profile.managed_default_content_settings.images': 2
+            })
             
             driver = webdriver.Chrome(options=chrome_options)
-            driver.get(deepwiki_url)
+            cache_bust_url = f"{deepwiki_url}?t={int(time.time())}"
+            driver.get(cache_bust_url)
 
-            wait = WebDriverWait(driver, 10)
+            wait = WebDriverWait(driver, 60)
             wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
+            
+            time.sleep(5)
+            
+            for attempt in range(12):
+                page_source = driver.page_source
+                if "Loading..." not in page_source and len(page_source) > 10000:
+                    break
+                if any(keyword in page_source for keyword in ["Analysis", "Repository", "Functions", "Classes"]):
+                    break
+                time.sleep(5)
             
             time.sleep(3)
             
@@ -242,9 +273,14 @@ class DeepWikiClient:
                     content_text.append(text)
             
             if content_text:
-                full_content = '\n'.join(content_text[:20])
-                if len(full_content) > 2000:
-                    full_content = full_content[:2000] + "..."
+                full_content = '\n'.join(content_text[:200])
+                if len(full_content) > 50000:
+                    full_content = full_content[:50000] + "..."
+                
+                if "Loading..." in full_content and len(full_content.strip()) < 100:
+                    logger.warning("DeepWiki content still shows Loading, may need more time")
+                    return None
+                
                 return full_content
             
             all_text = soup.get_text(separator='\n', strip=True)
@@ -336,9 +372,9 @@ Please provide detailed analysis and recommendations.
             analysis_result = {
                 "repo_url": repo_url,
                 "repo_name": repo_name,
-                "analysis": output_text,
+                "content": deepwiki_content,
                 "model": self.model,
-                "source": "llm_direct_analysis",
+                "source": "selenium",
                 "success": True
             }
             

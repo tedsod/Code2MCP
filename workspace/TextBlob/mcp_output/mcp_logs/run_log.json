@@ -1,23 +1,23 @@
 {
-  "timestamp": 1756398708.412969,
+  "timestamp": 1757486264.2189255,
   "node": "RunNode",
   "test_result": {
     "passed": true,
     "report_path": null,
     "stdout": "",
-    "stderr": "                                │\n\n│    📦 Transport:       STDIO                                               │\n\n│                                                                            │\n\n│    📚 Docs:            https://gofastmcp.com                               │\n\n│    🚀 Deploy:          https://fastmcp.cloud                               │\n\n│                                                                            │\n\n│    🏎️  FastMCP version: 2.11.3                                              │\n\n│    🤝 MCP version:     1.13.1                                              │\n\n│                                                                            │\n\n└────────────────────────────────────────────────────────────────────────────┘\n\n\n\n\n\n[08/29/25 00:31:48] INFO     Starting MCP server                 server.py:1445\n\n                             'textblob_service' with transport                 \n\n                             'stdio'                                           \n\n\n"
+    "stderr": "b_service                       │\n\n│                 📦 Transport:       STDIO                                  │\n\n│                                                                            │\n\n│                 🏎️  FastMCP version: 2.12.2                                 │\n\n│                 🤝 MCP SDK version: 1.13.1                                 │\n\n│                                                                            │\n\n│                 📚 Docs:            https://gofastmcp.com                  │\n\n│                 🚀 Deploy:          https://fastmcp.cloud                  │\n\n│                                                                            │\n\n└────────────────────────────────────────────────────────────────────────────┘\n\n\n\n\n\n[09/10/25 14:37:43] INFO     Starting MCP server                 server.py:1493\n\n                             'textblob_service' with transport                 \n\n                             'stdio'                                           \n\n\n"
   },
   "run_result": {
     "success": true,
     "test_passed": true,
     "exit_code": 0,
     "stdout": "",
-    "stderr": "                                │\n\n│    📦 Transport:       STDIO                                               │\n\n│                                                                            │\n\n│    📚 Docs:            https://gofastmcp.com                               │\n\n│    🚀 Deploy:          https://fastmcp.cloud                               │\n\n│                                                                            │\n\n│    🏎️  FastMCP version: 2.11.3                                              │\n\n│    🤝 MCP version:     1.13.1                                              │\n\n│                                                                            │\n\n└────────────────────────────────────────────────────────────────────────────┘\n\n\n\n\n\n[08/29/25 00:31:48] INFO     Starting MCP server                 server.py:1445\n\n                             'textblob_service' with transport                 \n\n                             'stdio'                                           \n\n\n",
-    "timestamp": 1756398708.412969
+    "stderr": "b_service                       │\n\n│                 📦 Transport:       STDIO                                  │\n\n│                                                                            │\n\n│                 🏎️  FastMCP version: 2.12.2                                 │\n\n│                 🤝 MCP SDK version: 1.13.1                                 │\n\n│                                                                            │\n\n│                 📚 Docs:            https://gofastmcp.com                  │\n\n│                 🚀 Deploy:          https://fastmcp.cloud                  │\n\n│                                                                            │\n\n└────────────────────────────────────────────────────────────────────────────┘\n\n\n\n\n\n[09/10/25 14:37:43] INFO     Starting MCP server                 server.py:1493\n\n                             'textblob_service' with transport                 \n\n                             'stdio'                                           \n\n\n",
+    "timestamp": 1757486264.2189255
   },
   "environment": {
     "type": "conda",
-    "name": "TextBlob_398479_env",
+    "name": "TextBlob_485430_env",
     "files": {
       "pyproject_toml": "E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\TextBlob\\source\\pyproject.toml"
     },
@@ -37,17 +37,24 @@
     },
     "adapter_mode": "import",
     "endpoints": [
-      "health",
-      "version",
       "TextBlob",
       "Word",
-      "WordList",
-      "Sentence",
-      "blobber",
+      "textblob",
+      "word",
       "NaiveBayesClassifier",
-      "PatternTagger",
-      "NLTKTagger",
-      "PatternAnalyzer"
+      "naivebayesclassifier",
+      "WordTokenizer",
+      "SentenceTokenizer",
+      "wordtokenizer",
+      "sentencetokenizer",
+      "PerceptronTagger",
+      "perceptrontagger",
+      "PatternAnalyzer",
+      "NaiveBayesAnalyzer",
+      "patternanalyzer",
+      "naivebayesanalyzer",
+      "strip_punc",
+      "lowercase"
     ],
     "mcp_dir": "E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\TextBlob\\mcp_output\\mcp_plugin",
     "tests_dir": "E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\TextBlob\\mcp_output\\tests_mcp",

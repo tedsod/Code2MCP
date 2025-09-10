@@ -3,9 +3,9 @@
     "name": "TextBlob",
     "url": "https://github.com/sloria/TextBlob",
     "local_path": "E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\TextBlob",
-    "description": "The project type is a Python library for simplifying natural language processing tasks.",
-    "features": "Part-of-speech tagging, Noun phrase extraction, Sentiment analysis, Word inflection and manipulation, Text classification, Text parsing and formatting",
-    "tech_stack": "Python, NLTK, Pattern",
+    "description": "Python library",
+    "features": "Basic functionality",
+    "tech_stack": "Python",
     "stars": 0,
     "forks": 0,
     "language": "Python",
@@ -14,9 +14,9 @@
     "intrusiveness_risk": "low"
   },
   "execution": {
-    "start_time": 1756398408.0084004,
-    "end_time": 1756398713.9351885,
-    "duration": 305.92678809165955,
+    "start_time": 1757485018.320429,
+    "end_time": 1757486264.2249267,
+    "duration": 1245.9044976234436,
     "status": "success",
     "workflow_status": "success",
     "nodes_executed": [
@@ -50,7 +50,7 @@
         "passed": true,
         "report_path": null,
         "stdout": "",
-        "stderr": "                                │\n\n│    📦 Transport:       STDIO                                               │\n\n│                                                                            │\n\n│    📚 Docs:            https://gofastmcp.com                               │\n\n│    🚀 Deploy:          https://fastmcp.cloud                               │\n\n│                                                                            │\n\n│    🏎️  FastMCP version: 2.11.3                                              │\n\n│    🤝 MCP version:     1.13.1                                              │\n\n│                                                                            │\n\n└────────────────────────────────────────────────────────────────────────────┘\n\n\n\n\n\n[08/29/25 00:31:48] INFO     Starting MCP server                 server.py:1445\n\n                             'textblob_service' with transport                 \n\n                             'stdio'                                           \n\n\n"
+        "stderr": "b_service                       │\n\n│                 📦 Transport:       STDIO                                  │\n\n│                                                                            │\n\n│                 🏎️  FastMCP version: 2.12.2                                 │\n\n│                 🤝 MCP SDK version: 1.13.1                                 │\n\n│                                                                            │\n\n│                 📚 Docs:            https://gofastmcp.com                  │\n\n│                 🚀 Deploy:          https://fastmcp.cloud                  │\n\n│                                                                            │\n\n└────────────────────────────────────────────────────────────────────────────┘\n\n\n\n\n\n[09/10/25 14:37:43] INFO     Starting MCP server                 server.py:1493\n\n                             'textblob_service' with transport                 \n\n                             'stdio'                                           \n\n\n"
       },
       "service_health": "healthy",
       "startup_time": 0,
@@ -79,16 +79,16 @@
       "modules": []
     },
     "risk_assessment": {
-      "import_feasibility": 0.8,
+      "import_feasibility": 0.9,
       "intrusiveness_risk": "low",
       "complexity": "medium"
     },
     "deepwiki_analysis": {
       "repo_url": "https://github.com/sloria/TextBlob",
       "repo_name": "TextBlob",
-      "analysis": "TextBlob is a Python library for processing textual data, focusing on simplifying Natural Language Processing (NLP) tasks. It provides an easy-to-use API to perform various NLP operations, such as part-of-speech tagging, sentiment analysis, noun phrase extraction, etc.\n\n### 1. What are the main functions and purposes of this repository?\n\nTextBlob's main functions include:\n\n- **Part-of-speech tagging**: Identifies parts of speech in text (e.g., nouns, verbs).\n- **Noun phrase extraction**: Extracts noun phrases from text.\n- **Sentiment analysis**: Analyzes the sentiment polarity of text (positive or negative).\n- **Word inflection and manipulation**: Supports pluralization, singularization, past tense, etc. of words.\n- **Text classification**: Provides simple text classification functionality.\n- **Text parsing and formatting**: Supports parsing of different text formats.\n\nTextBlob's purpose is mainly to provide developers with a simple interface for common NLP tasks, suitable for rapid prototyping and educational purposes.\n\n### 2. What are the core modules and entry points of this repository?\n\nTextBlob's core modules and entry points include:\n\n- **TextBlob Class**: This is the main interface class that users instantiate to process text.\n- **Word and WordList Classes**: For handling operations on words and lists of words.\n- **Sentence Class**: For handling sentence-level operations.\n- **Blobber Factory**: A factory class for creating TextBlob objects, supporting batch processing.\n- **NLP Components**: Including part-of-speech taggers, noun phrase extractors, sentiment analyzers, etc.\n\nThese modules together form the core architecture of TextBlob, providing rich functionality for processing text data.\n\n### 3. What are the main technology stacks and dependencies used by this repository?\n\nTextBlob mainly relies on the following technology stacks and libraries:\n\n- **Python**: As the main programming language.\n- **NLTK**: For underlying natural language processing tasks.\n- **Pattern**: For sentiment analysis and noun phrase extraction.\n- **Other Dependencies**: May include other auxiliary libraries, such as numpy, for data processing.\n\nThese dependencies allow TextBlob to simplify NLP tasks at a higher level while maintaining flexibility and extensibility.\n\n### 4. Is this project suitable for conversion to an MCP (Model Context Protocol) service? Why?\n\nTo assess whether TextBlob is suitable for conversion to an MCP service, the following points need to be considered:\n\n- **Modularity and Extensibility**: TextBlob is designed to be modular, allowing users to extend and customize its functionality, which aligns with the requirements of an MCP service.\n- **API Design**: TextBlob provides a simple and easy-to-use API that can be easily converted into an MCP service interface.\n- **Independence and Reusability**: TextBlob's functions are relatively independent and can be called as independent modules of an MCP service.\n- **Requirements and Application Scenarios**: If there is a need to provide TextBlob's functionality as a microservice to other applications or systems, then converting it to an MCP service is reasonable.\n\nRecommendations:\n\n- **Assess Requirements**: First, assess whether there is a need for TextBlob's functionality as a service.\n- **Design Service Interface**: Design the service interface according to MCP standards to ensure the accessibility and extensibility of the functionality.\n- **Consider Performance and Extensibility**: During the conversion process, consider how to optimize performance and support extension to meet different application scenarios.\n\nOverall, TextBlob has the potential to be converted into an MCP service, especially when its functionality needs to be integrated into a larger system.",
-      "model": "gpt-4o",
-      "source": "llm_direct_analysis",
+      "content": "sloria/TextBlob\nInstallation and Setup\nQuick Start Guide\nProject History and Evolution\nCore Architecture\nTextBlob Class\nWord and WordList Classes\nSentence Class\nBlobber Factory\nNLP Components\nPart-of-Speech Taggers\nNoun Phrase Extractors\nSentiment Analysis\nInflection and Word Manipulation\nAdvanced Features\nClassification System\nText Formats and Parsing\nCustomization and Extensions\nDevelopment Guide\nContributing Guidelines\nTesting Framework\nDocumentation System\nCHANGELOG.rst\ntests/test_blob.py\nTextBlob is a Python library for processing textual data that provides a simple API for common natural language processing (NLP) tasks. It serves as an accessible interface to powerful NLP capabilities without requiring deep expertise in computational linguistics. TextBlob builds upon the robust foundations ofNLTKandpatternlibraries, offering a more intuitive and streamlined experience for developers.\nThis document provides an overview of the TextBlob library's architecture, components, and design philosophy. For installation instructions and quick start examples, seeInstallation and SetupandQuick Start Guide.\nCore Architecture\nTextBlob is built around a small set of core classes that provide a rich interface for text processing operations. The main entry point for users is theTextBlobclass, which provides methods for various NLP operations.\nClass Hierarchy Diagram\n\"contains\"\"contains\"\"contains\"\"contains\"\"creates\"BaseBlob+text: str+tokenizer+pos_tagger+np_extractor+analyzer+parser+classifierTextBlob+sentences+words+tags+noun_phrases+sentiment+classify()+correct()+parse()+ngrams()Word+string: str+pos_tag: str+definitions+synsets+singularize()+pluralize()+lemmatize()+spellcheck()+correct()WordList+words: list+count()+pluralize()+singularize()+lemmatize()Sentence+string: str+start_index: int+end_index: int+words+tags+sentiment+parse()Blobber+tokenizer+pos_tagger+np_extractor+analyzer+parser+classifier+call(text)\n+pos_tagger\n+np_extractor\n+classifier\n+noun_phrases\n+classify()\n+string: str\n+pos_tag: str\n+definitions\n+singularize()\n+pluralize()\n+lemmatize()\n+spellcheck()\n+words: list\n+pluralize()\n+singularize()\n+lemmatize()\n+string: str\n+start_index: int\n+end_index: int\n+pos_tagger\n+np_extractor\n+classifier\n+call(text)\nThe architecture follows a hierarchical model:\nBaseBlob: The abstract base class that provides common functionality for text processing.\nTextBlob: The main class users interact with, extending BaseBlob with additional functionality.\nSentence: Represents a single sentence within a TextBlob.\nWord: Represents a single word with methods for inflection, lemmatization, etc.\nWordList: A collection of Word objects with methods for plural/singular forms and more.\nBlobber: A factory class for creating TextBlob instances with consistent configurations.\nSources:tests/test_blob.py231-252tests/test_blob.py851-951tests/test_blob.py968-1017\nNLP Pipeline\nTextBlob processes text through a pipeline of operations, with each step handling a specific NLP task. The output of one operation often serves as input to subsequent operations, creating a flexible processing chain.\nTextBlob Processing Pipeline Diagram\nNLP ComponentsTextBlob NLP PipelineRaw TextTextBlobTokenizationWordsSentencesPart-of-Speech TaggingNoun Phrase ExtractionSentiment AnalysisParsingClassificationWord InflectionSpelling CorrectionWordNet IntegrationPluggable ComponentsTokenizersPOS TaggersNP ExtractorsSentiment AnalyzersParsersClassifiersProcessing Results\nNLP Components\nTextBlob NLP Pipeline\nTokenization\nPart-of-Speech Tagging\nNoun Phrase Extraction\nSentiment Analysis\nClassification\nWord Inflection\nSpelling Correction\nWordNet Integration\nPluggable Components\nPOS Taggers\nNP Extractors\nSentiment Analyzers\nClassifiers\nProcessing Results\nKey operations in the pipeline include:\nTokenization: Breaking text into words and sentences using a tokenizer.\nPart-of-Speech Tagging: Identifying grammatical parts of speech for each word.\nNoun Phrase Extraction: Identifying noun phrases based on patterns of POS tags.\nSentiment Analysis: Calculating polarity (positive/negative) and subjectivity of text.\nParsing: Creating syntax trees for sentences.\nClassification: Categorizing text into predefined classes.\nWord Operations: Inflection, lemmatization, spelling correction, and WordNet lookups.\nEach of these operations is backed by pluggable components that can be customized or replaced.\nSources:tests/test_blob.py390-407tests/test_blob.py419-436tests/test_blob.py595-596tests/test_blob.py665-673\nComponent System\nTextBlob implements a pluggable component architecture where each NLP task has a base interface and multiple concrete implementations. This design enables flexibility and extensibility.\nComponent Implementation Diagram\n«interface»BaseTagger+tag(text)«interface»BaseNPExtractor+extract(text, tags)«interface»BaseTokenizer+tokenize(text)+itokenize(text)«interface»BaseSentimentAnalyzer+analyze(text)«interface»BaseParser+parse(text)«interface»BaseClassifier+classify(text)+train(data)NLTKTaggerPatternTaggerFastNPExtractorConllExtractorWordTokenizerSentenceTokenizerPatternAnalyzerNaiveBayesAnalyzerNLTKClassifierNaiveBayesClassifierDecisionTreeClassifierMaxEntClassifierPositiveNaiveBayesClassifier\n«interface»\n«interface»\nBaseNPExtractor\n+extract(text, tags)\n«interface»\nBaseTokenizer\n+tokenize(text)\n+itokenize(text)\n«interface»\nBaseSentimentAnalyzer\n+analyze(text)\n«interface»\n+parse(text)\n«interface»\nBaseClassifier\n+classify(text)\n+train(data)\nPatternTagger\nFastNPExtractor\nConllExtractor\nWordTokenizer\nSentenceTokenizer\nPatternAnalyzer\nNaiveBayesAnalyzer\nNLTKClassifier\nNaiveBayesClassifier\nDecisionTreeClassifier\nMaxEntClassifier\nPositiveNaiveBayesClassifier\nThe component system includes:\nTokenizers:WordTokenizer,SentenceTokenizer- For breaking text into units.\nWordTokenizer\nSentenceTokenizer\nPOS Taggers:NLTKTagger,PatternTagger- For assigning parts of speech.\nPatternTagger\nNP Extractors:FastNPExtractor,ConllExtractor- For extracting noun phrases.\nFastNPExtractor\nConllExtractor\nSentiment Analyzers:PatternAnalyzer,NaiveBayesAnalyzer- For analyzing sentiment.\nPatternAnalyzer\nNaiveBayesAnalyzer\nParsers:PatternParser- For parsing sentence structure.\nPatternParser\nClassifiers: Various implementations for text classification.\nEach component can be used independently or as part of the TextBlob pipeline, and users can provide their own implementations.\nSources:tests/test_blob.py15-18tests/test_blob.py485-498tests/test_blob.py470-473tests/test_blob.py472-483tests/test_blob.py452-468\nDefault Components\nTextBlob comes with default implementations for each component type. These defaults provide a good balance between accuracy and performance for general use cases.\nWordTokenizer\nFastNPExtractor\nPatternAnalyzer\nPatternParser\nSources:tests/test_blob.py731-733tests/test_blob.py485-487tests/test_blob.py452-456\nExtension and Customization\nTextBlob is designed to be highly customizable, allowing users to extend its functionality or replace components with their own implementations.\nCustomization Diagram\nExtensionsCore Systemtextblob-somethingtextblob-xxCustom ComponentsCustom TokenizerCustom TaggerCustom NP ExtractorCustom AnalyzerCustom ParserCustom ClassifierUser CodeTextBlobDefault NLP ComponentsWordTokenizerNLTKTaggerFastNPExtractorPatternAnalyzerPatternParserModel ExtensionsLanguage ExtensionsCustomComponents\nCore System\ntextblob-something\ntextblob-xx\nCustom Components\nCustom Tokenizer\nCustom Tagger\nCustom NP Extractor\nCustom Analyzer\nCustom Parser\nCustom Classifier\nDefault NLP Components\nWordTokenizer\nFastNPExtractor\nPatternAnalyzer\nPatternParser\nModel Extensions\nLanguage Extensions\nCustomComponents\nThere are several ways to customize TextBlob:\nComponent Injection: Specify custom components when creating a TextBlob or Blobber instance:\nfromtextblobimportTextBlobfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.taggersimportNLTKTagger# Create a TextBlob with custom componentsblob = TextBlob(\"Some text\", tokenizer=SentenceTokenizer(), pos_tagger=NLTKTagger())\nfromtextblobimportTextBlobfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.taggersimportNLTKTagger# Create a TextBlob with custom componentsblob = TextBlob(\"Some text\", tokenizer=SentenceTokenizer(), pos_tagger=NLTKTagger())\nfromtextblobimportTextBlobfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.taggersimportNLTKTagger# Create a TextBlob with custom componentsblob = TextBlob(\"Some text\", tokenizer=SentenceTokenizer(), pos_tagger=NLTKTagger())\nBlobber Factory: Create a Blobber with custom components for consistent TextBlob creation:\nfromtextblobimportBlobberfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.np_extractorsimportConllExtractor# Create a Blobber with custom componentstb = Blobber(tokenizer=SentenceTokenizer(), np_extractor=ConllExtractor())# Create TextBlobs with the same configurationblob1 = tb(\"Some text\")blob2 = tb(\"More text\")\nfromtextblobimportBlobberfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.np_extractorsimportConllExtractor# Create a Blobber with custom componentstb = Blobber(tokenizer=SentenceTokenizer(), np_extractor=ConllExtractor())# Create TextBlobs with the same configurationblob1 = tb(\"Some text\")blob2 = tb(\"More text\")\nfromtextblobimportBlobberfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.np_extractorsimportConllExtractor# Create a Blobber with custom componentstb = Blobber(tokenizer=SentenceTokenizer(), np_extractor=ConllExtractor())# Create TextBlobs with the same configurationblob1 = tb(\"Some text\")blob2 = tb(\"More text\")\nExtension Packages: Create extension packages for new models or language support.\nSources:tests/test_blob.py995-1004tests/test_blob.py1006-1011tests/test_blob.py1013-1016\nRecent Changes and Version Compatibility\nTextBlob is continually evolving. Recent versions have made several significant changes:\nRemoved translation functionality (use the official Google Translate API instead)\nSupport for Python 3.9-3.13 and nltk>=3.9\nRemoved vendorized modules\nPerformance improvements in text processing\nTextBlob maintains backward compatibility for core functionality while evolving to support newer Python versions and improve performance.\nSources:CHANGELOG.rst4-16CHANGELOG.rst30-32\nTextBlob provides a simple yet powerful interface for NLP tasks, making advanced text processing accessible to Python developers. Its modular architecture, pluggable components, and extensibility make it adaptable to a wide range of use cases, from simple sentiment analysis to more complex text classification and processing tasks.\nFor more detailed information on specific components and usage patterns, refer to the other sections of this documentation.\nSources:README.rst16-17README.rst50-64\nRefresh this wiki\nOn this page\nCore Architecture\nClass Hierarchy Diagram\nNLP Pipeline\nTextBlob Processing Pipeline Diagram\nComponent System\nComponent Implementation Diagram",
+      "model": "gpt-5",
+      "source": "selenium",
       "success": true
     },
     "code_complexity": {
@@ -124,24 +124,33 @@
     "generated_files_size": 0,
     "tool_endpoints": 0,
     "supported_features": [
-      "Part-of-speech tagging",
-      "Noun phrase extraction",
-      "Sentiment analysis",
-      "Word inflection and manipulation",
-      "Text classification",
-      "Text parsing and formatting"
+      "Basic functionality"
     ],
     "generated_tools": [
       "Basic tools",
       "Health check tools",
-      "Version information tools"
+      "Version info tools"
     ]
   },
   "code_review": {},
   "errors": [],
   "warnings": [],
   "recommendations": [
-    "1. Increase test coverage to ensure all core modules and functions are fully tested.\n2. Provide detailed test report paths to better track test results.\n3. Optimize standard output and error output messages of the plugin to reduce redundant content.\n4. Update project documentation to ensure all dependencies and installation steps are clear.\n5. Consider adding a requirements.txt file to better manage project dependencies.\n6. Improve the modular design of the code to enhance extensibility and maintainability.\n7. Evaluate the need to convert TextBlob functionality into an MCP service and design a reasonable service interface.\n8. Optimize performance to ensure support for different application scenarios when converted to an MCP service.\n9. Enhance project security by regularly reviewing and updating security-related documentation.\n10. Provide more detailed code review reports to identify potential code quality issues."
+    "Improve test coverage by adding more edge cases and scenarios",
+    "Ensure all test reports are properly generated and stored",
+    "Address the lack of stdout and stderr clarity in plugin tests",
+    "Optimize dependency management by adding a requirements.txt file",
+    "Validate compatibility with Python versions mentioned in the analysis",
+    "Enhance documentation for MCP plugin usage and setup",
+    "Refactor code to reduce complexity in core modules",
+    "Implement performance benchmarks for key NLP components",
+    "Add integration tests for MCP plugin endpoints",
+    "Ensure proper error handling and logging in MCP services",
+    "Update README files to include recent changes and version compatibility",
+    "Verify the accuracy of sentiment analysis and classification components",
+    "Improve modularity and extensibility of NLP pipeline components",
+    "Conduct a risk assessment for dependency updates",
+    "Streamline the import strategy for better maintainability."
   ],
   "performance_metrics": {
     "memory_usage_mb": 0,
@@ -172,30 +181,15 @@
   },
   "execution_analysis": {
     "success_factors": [
-      "Modular design",
-      "Simple and easy-to-use API",
-      "Low complexity and low intrusiveness risk"
+      "Workflow execution completed"
     ],
     "failure_reasons": [],
-    "overall_assessment": "excellent",
-    "node_performance": {
-      "download_time": "Completed quickly, no delays",
-      "analysis_time": "Analysis was fast, structure and dependency analysis were accurate",
-      "generation_time": "Generation time was moderate, as expected",
-      "test_time": "Tests were fast and comprehensive, with 100% coverage"
-    },
-    "resource_usage": {
-      "memory_efficiency": "No specific data provided, but no memory issues reported",
-      "cpu_efficiency": "No specific data provided, but no CPU issues reported",
-      "disk_usage": "Few files generated, high disk usage efficiency"
-    }
+    "overall_assessment": "good"
   },
   "technical_quality": {
-    "code_quality_score": 85,
-    "architecture_score": 90,
-    "performance_score": 80,
-    "maintainability_score": 75,
-    "security_score": 85,
-    "scalability_score": 80
+    "code_quality_score": 80,
+    "architecture_score": 75,
+    "performance_score": 70,
+    "maintainability_score": 75
   }
 }

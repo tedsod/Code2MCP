@@ -155,7 +155,7 @@ Requirements:
 4. Include necessary import statements: from fastmcp import FastMCP, subprocess, ctypes
 5. Use FastMCP class to create the service application: mcp = FastMCP("service_name")
 6. Create tool endpoints for each core function, using @mcp.tool decorator
-7. Include health check and version information endpoints
+7. Focus on core functionality endpoints only
 8. Must include create_app() function, which returns FastMCP instance
 9. Tool functions must return a standard dictionary, containing success/result/error fields
 10. Do not use *args or **kwargs in any @mcp.tool function; all parameters must be explicit and typed
@@ -181,7 +181,7 @@ Requirements:
 3. Include necessary import statements: from fastmcp import FastMCP
 4. Use FastMCP class to create the service application: mcp = FastMCP("service_name")
 5. Generate rich tool endpoints for each core module, using @mcp.tool decorator, including name and description parameters
-6. Include health check and version information endpoints
+6. Focus on core functionality endpoints only
 7. Must include create_app() function, which returns FastMCP instance
 8. Tool functions must return a standard dictionary, containing success/result/error fields, do not add description or other extra fields
 9. Do not use *args or **kwargs in any @mcp.tool function; all parameters must be explicit and typed
@@ -494,11 +494,6 @@ mcp = FastMCP("{service_name}")
 
 {tools_code}
 
-@mcp.tool(name="version_info", description="Get the version information of the C++ service")
-def version_info():
-    \"\"\"Return C++ service version information\"\"\"
-    return {{"success": True, "result": {{"version": "1.0.0", "type": "C++ wrapper"}}}}
-
 @mcp.tool(name="compile_status", description="Check C++ compilation status")
 def compile_status():
     \"\"\"Check C++ compilation status\"\"\"
@@ -534,10 +529,6 @@ mcp = FastMCP("{service_name}")
 
 {tools_code}
 
-@mcp.tool(name="version_info", description="Get the version information of the service")
-def version_info():
-    \"\"\"Return service version information\"\"\"
-    return {{"success": True, "result": {{"version": "1.0.0"}}}}
 
 def create_app():
     \"\"\"Create and return FastMCP application instance\"\"\"
@@ -938,8 +929,6 @@ python start_mcp.py
 ## Usage
 After the service starts, you can call the following tools via MCP client:
 
-- `health()`: Health check
-- `version()`: Version information
 """
     
     core_modules = llm_analysis.get("core_modules", [])
@@ -1222,7 +1211,7 @@ if __name__ == "__main__":
     write_file(test_basic_path, test_content)
     files["mcp_output/tests_mcp/test_mcp_basic.py"] = test_basic_path
     
-    endpoints = ["health", "version"]
+    endpoints = []
     core_modules = llm_analysis.get("core_modules", [])
     for module in core_modules:
         functions = module.get("functions", [])

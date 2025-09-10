@@ -91,7 +91,7 @@ def print_config_info(config_manager):
         console.print(f"[red]Failed to get configuration information: {e}[/red]")
 
 async def main():
-    parser = argparse.ArgumentParser(description="MCP-Agent: Automated Code Repository to MCP Service Conversion System")
+    parser = argparse.ArgumentParser(description="Code2MCP: Automated Code Repository to MCP Service Conversion System")
     parser.add_argument("repo_url", help="Target code repository URL")
     parser.add_argument("--output", "-o", default="./output", help="Output directory")
     parser.add_argument("--provider", "-p", help="Specify LLM provider (openai/deepseek)")
@@ -131,7 +131,7 @@ async def main():
         TextColumn("[progress.description]{task.description}"),
         console=console,
     ) as progress:
-        task = progress.add_task("Running MCP-Agent workflow...", total=None)
+        task = progress.add_task("Running Code2MCP workflow...", total=None)
         try:
             workflow_options = {
                 "deepwiki_model": args.deepwiki_model,

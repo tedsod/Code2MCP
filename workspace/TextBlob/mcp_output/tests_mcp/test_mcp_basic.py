@@ -1,5 +1,5 @@
 """
-MCP Service Basic Tests
+MCP Service Basic Test
 """
 import sys
 import os
@@ -13,7 +13,7 @@ source_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.pa
 sys.path.insert(0, source_path)
 
 def test_import_mcp_service():
-    """Test that the MCP service can be imported correctly"""
+    """Test if MCP service can be imported normally"""
     try:
         from mcp_service import create_app
         app = create_app()
@@ -21,11 +21,11 @@ def test_import_mcp_service():
         print("MCP service imported successfully")
         return True
     except Exception as e:
-        print(f"Failed to import MCP service: {e}")
+        print("MCP service import failed: " + str(e))
         return False
 
 def test_adapter_init():
-    """Test that the adapter can be initialized correctly"""
+    """Test if adapter can be initialized normally"""
     try:
         from adapter import Adapter
         adapter = Adapter()
@@ -33,11 +33,11 @@ def test_adapter_init():
         print("Adapter initialized successfully")
         return True
     except Exception as e:
-        print(f"Failed to initialize adapter: {e}")
+        print("Adapter initialization failed: " + str(e))
         return False
 
 if __name__ == "__main__":
-    print("Running MCP service basic tests...")
+    print("Running MCP service basic test...")
     test1 = test_import_mcp_service()
     test2 = test_adapter_init()
     

@@ -1,7 +1,7 @@
 {
   "environment": {
     "type": "conda",
-    "name": "TextBlob_398479_env",
+    "name": "TextBlob_485430_env",
     "files": {
       "pyproject_toml": "E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\TextBlob\\source\\pyproject.toml"
     },
@@ -12,6 +12,19 @@
     "passed": true,
     "report_path": null
   },
-  "timestamp": 1756398529.6007144,
-  "conda_available": true
+  "timestamp": 1757485903.308131,
+  "conda_available": true,
+  "pythonpath_final": "E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\TextBlob;E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\TextBlob\\source;E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\TextBlob",
+  "llm_used": {
+    "provider": "openai",
+    "model": "gpt-4o",
+    "did_plan": false,
+    "did_repair": false
+  },
+  "pip_policy": {
+    "only_binary": true,
+    "retries": 2,
+    "timeout": 60,
+    "mirror": null
+  }
 }

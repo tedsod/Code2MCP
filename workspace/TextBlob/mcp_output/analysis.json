@@ -1,7 +1,7 @@
 {
   "summary": {
     "repository_url": "https://github.com/sloria/TextBlob",
-    "summary": "Repository: sloria/textblob\nCommit: 6dd8b0fdf4ed50989432544041df78274ceb91df\nFiles analyzed: 86\n\nEstimated tokens: 415.8k",
+    "summary": "Repository: sloria/textblob\nCommit: 364ee8bbb4efb8bbfced19410c3c0bddcfe3cd73\nFiles analyzed: 86\n\nEstimated tokens: 415.8k",
     "file_tree": "Directory structure:\n└── sloria-textblob/\n    ├── README.rst\n    ├── AUTHORS.rst\n    ├── CHANGELOG.rst\n    ├── CONTRIBUTING.rst\n    ├── LICENSE\n    ├── NOTICE\n    ├── pyproject.toml\n    ├── RELEASING.md\n    ├── SECURITY.md\n    ├── tox.ini\n    ├── .konchrc\n    ├── .pre-commit-config.yaml\n    ├── .readthedocs.yml\n    ├── docs/\n    │   ├── advanced_usage.rst\n    │   ├── api_reference.rst\n    │   ├── authors.rst\n    │   ├── changelog.rst\n    │   ├── classifiers.rst\n    │   ├── conf.py\n    │   ├── contributing.rst\n    │   ├── extensions.rst\n    │   ├── index.rst\n    │   ├── install.rst\n    │   ├── license.rst\n    │   ├── make.bat\n    │   ├── Makefile\n    │   ├── quickstart.rst\n    │   ├── _templates/\n    │   │   ├── side-primary.html\n    │   │   └── side-secondary.html\n    │   └── _themes/\n    │       ├── flask_theme_support.py\n    │       ├── LICENSE\n    │       ├── kr/\n    │       │   ├── layout.html\n    │       │   ├── relations.html\n    │       │   ├── theme.conf\n    │       │   └── static/\n    │       │       ├── flasky.css_t\n    │       │       └── small_flask.css\n    │       └── kr_small/\n    │           ├── layout.html\n    │           ├── theme.conf\n    │           └── static/\n    │               └── flasky.css_t\n    ├── src/\n    │   └── textblob/\n    │       ├── __init__.py\n    │       ├── _text.py\n    │       ├── base.py\n    │       ├── blob.py\n    │       ├── classifiers.py\n    │       ├── decorators.py\n    │       ├── download_corpora.py\n    │       ├── exceptions.py\n    │       ├── formats.py\n    │       ├── inflect.py\n    │       ├── mixins.py\n    │       ├── np_extractors.py\n    │       ├── parsers.py\n    │       ├── sentiments.py\n    │       ├── taggers.py\n    │       ├── tokenizers.py\n    │       ├── utils.py\n    │       ├── wordnet.py\n    │       └── en/\n    │           ├── __init__.py\n    │           ├── en-context.txt\n    │           ├── en-entities.txt\n    │           ├── en-lexicon.txt\n    │           ├── en-morphology.txt\n    │           ├── en-sentiment.xml\n    │           ├── en-spelling.txt\n    │           ├── inflect.py\n    │           ├── np_extractors.py\n    │           ├── parsers.py\n    │           ├── sentiments.py\n    │           └── taggers.py\n    ├── tests/\n    │   ├── __init__.py\n    │   ├── data.csv\n    │   ├── data.json\n    │   ├── data.tsv\n    │   ├── test_blob.py\n    │   ├── test_classifiers.py\n    │   ├── test_decorators.py\n    │   ├── test_formats.py\n    │   ├── test_inflect.py\n    │   ├── test_np_extractor.py\n    │   ├── test_parsers.py\n    │   ├── test_sentiments.py\n    │   ├── test_taggers.py\n    │   ├── test_tokenizers.py\n    │   └── test_utils.py\n    └── .github/\n        ├── dependabot.yml\n        └── workflows/\n            └── build-release.yml\n",
     "content": {},
     "processed_by": "gitingest",
@@ -32,14 +32,13 @@
         "module": "blob",
         "functions": [
           "TextBlob",
-          "Word",
-          "WordList",
-          "Sentence"
+          "Word"
         ],
         "classes": [
-          "Blobber"
+          "TextBlob",
+          "Word"
         ],
-        "description": "Provides main text processing interfaces, including operations on text, words, and sentences."
+        "description": "Core module for text processing, including sentiment analysis, noun phrase extraction, and tokenization."
       },
       {
         "package": "source.src.textblob",
@@ -47,46 +46,77 @@
         "functions": [
           "NaiveBayesClassifier"
         ],
-        "classes": [],
-        "description": "Provides text classification functionality, supporting Naive Bayes classifiers."
+        "classes": [
+          "NaiveBayesClassifier"
+        ],
+        "description": "Provides functionality for text classification using Naive Bayes."
+      },
+      {
+        "package": "source.src.textblob",
+        "module": "tokenizers",
+        "functions": [
+          "WordTokenizer",
+          "SentenceTokenizer"
+        ],
+        "classes": [
+          "WordTokenizer",
+          "SentenceTokenizer"
+        ],
+        "description": "Tokenization utilities for splitting text into words and sentences."
       },
       {
         "package": "source.src.textblob",
         "module": "taggers",
         "functions": [
-          "PatternTagger",
-          "NLTKTagger"
+          "PerceptronTagger"
         ],
-        "classes": [],
-        "description": "Provides part-of-speech tagging functionality, supporting different taggers."
+        "classes": [
+          "PerceptronTagger"
+        ],
+        "description": "Part-of-speech tagging using the Perceptron algorithm."
       },
       {
         "package": "source.src.textblob",
         "module": "sentiments",
         "functions": [
-          "PatternAnalyzer"
+          "PatternAnalyzer",
+          "NaiveBayesAnalyzer"
+        ],
+        "classes": [
+          "PatternAnalyzer",
+          "NaiveBayesAnalyzer"
+        ],
+        "description": "Sentiment analysis utilities using pattern-based and Naive Bayes approaches."
+      },
+      {
+        "package": "source.src.textblob",
+        "module": "utils",
+        "functions": [
+          "strip_punc",
+          "lowercase"
         ],
         "classes": [],
-        "description": "Provides sentiment analysis functionality, supporting pattern analyzers."
+        "description": "Utility functions for text preprocessing, such as punctuation stripping and case normalization."
       }
     ],
     "cli_commands": [],
     "import_strategy": {
       "primary": "import",
       "fallback": "blackbox",
-      "confidence": 0.85
+      "confidence": 0.9
     },
     "dependencies": {
       "required": [
         "nltk",
+        "numpy",
         "pattern"
       ],
       "optional": [
-        "numpy"
+        "scikit-learn"
       ]
     },
     "risk_assessment": {
-      "import_feasibility": 0.8,
+      "import_feasibility": 0.9,
       "intrusiveness_risk": "low",
       "complexity": "medium"
     }
@@ -94,17 +124,17 @@
   "deepwiki_analysis": {
     "repo_url": "https://github.com/sloria/TextBlob",
     "repo_name": "TextBlob",
-    "analysis": "TextBlob is a Python library for processing textual data, focusing on simplifying Natural Language Processing (NLP) tasks. It provides an easy-to-use API to perform various NLP operations, such as part-of-speech tagging, sentiment analysis, noun phrase extraction, etc.\n\n### 1. What are the main functions and purposes of this repository?\n\nTextBlob's main functions include:\n\n- **Part-of-speech tagging**: Identifies parts of speech in text (e.g., nouns, verbs).\n- **Noun phrase extraction**: Extracts noun phrases from text.\n- **Sentiment analysis**: Analyzes the sentiment polarity of text (positive or negative).\n- **Word inflection and manipulation**: Supports pluralization, singularization, past tense, etc. of words.\n- **Text classification**: Provides simple text classification functionality.\n- **Text parsing and formatting**: Supports parsing of different text formats.\n\nTextBlob's purpose is mainly to provide developers with a simple interface for common NLP tasks, suitable for rapid prototyping and educational purposes.\n\n### 2. What are the core modules and entry points of this repository?\n\nTextBlob's core modules and entry points include:\n\n- **TextBlob Class**: This is the main interface class that users instantiate to process text.\n- **Word and WordList Classes**: For handling operations on words and lists of words.\n- **Sentence Class**: For handling sentence-level operations.\n- **Blobber Factory**: A factory class for creating TextBlob objects, supporting batch processing.\n- **NLP Components**: Including part-of-speech taggers, noun phrase extractors, sentiment analyzers, etc.\n\nThese modules together form the core architecture of TextBlob, providing rich functionality for processing text data.\n\n### 3. What are the main technology stacks and dependencies used by this repository?\n\nTextBlob mainly relies on the following technology stacks and libraries:\n\n- **Python**: As the main programming language.\n- **NLTK**: For underlying natural language processing tasks.\n- **Pattern**: For sentiment analysis and noun phrase extraction.\n- **Other Dependencies**: May include other auxiliary libraries, such as numpy, for data processing.\n\nThese dependencies allow TextBlob to simplify NLP tasks at a higher level while maintaining flexibility and extensibility.\n\n### 4. Is this project suitable for conversion to an MCP (Model Context Protocol) service? Why?\n\nTo assess whether TextBlob is suitable for conversion to an MCP service, the following points need to be considered:\n\n- **Modularity and Extensibility**: TextBlob is designed to be modular, allowing users to extend and customize its functionality, which aligns with the requirements of an MCP service.\n- **API Design**: TextBlob provides a simple and easy-to-use API that can be easily converted into an MCP service interface.\n- **Independence and Reusability**: TextBlob's functions are relatively independent and can be called as independent modules of an MCP service.\n- **Requirements and Application Scenarios**: If there is a need to provide TextBlob's functionality as a microservice to other applications or systems, then converting it to an MCP service is reasonable.\n\nRecommendations:\n\n- **Assess Requirements**: First, assess whether there is a need for TextBlob's functionality as a service.\n- **Design Service Interface**: Design the service interface according to MCP standards to ensure the accessibility and extensibility of the functionality.\n- **Consider Performance and Extensibility**: During the conversion process, consider how to optimize performance and support extension to meet different application scenarios.\n\nOverall, TextBlob has the potential to be converted into an MCP service, especially when its functionality needs to be integrated into a larger system.",
-    "model": "gpt-4o",
-    "source": "llm_direct_analysis",
+    "content": "sloria/TextBlob\nInstallation and Setup\nQuick Start Guide\nProject History and Evolution\nCore Architecture\nTextBlob Class\nWord and WordList Classes\nSentence Class\nBlobber Factory\nNLP Components\nPart-of-Speech Taggers\nNoun Phrase Extractors\nSentiment Analysis\nInflection and Word Manipulation\nAdvanced Features\nClassification System\nText Formats and Parsing\nCustomization and Extensions\nDevelopment Guide\nContributing Guidelines\nTesting Framework\nDocumentation System\nCHANGELOG.rst\ntests/test_blob.py\nTextBlob is a Python library for processing textual data that provides a simple API for common natural language processing (NLP) tasks. It serves as an accessible interface to powerful NLP capabilities without requiring deep expertise in computational linguistics. TextBlob builds upon the robust foundations ofNLTKandpatternlibraries, offering a more intuitive and streamlined experience for developers.\nThis document provides an overview of the TextBlob library's architecture, components, and design philosophy. For installation instructions and quick start examples, seeInstallation and SetupandQuick Start Guide.\nCore Architecture\nTextBlob is built around a small set of core classes that provide a rich interface for text processing operations. The main entry point for users is theTextBlobclass, which provides methods for various NLP operations.\nClass Hierarchy Diagram\n\"contains\"\"contains\"\"contains\"\"contains\"\"creates\"BaseBlob+text: str+tokenizer+pos_tagger+np_extractor+analyzer+parser+classifierTextBlob+sentences+words+tags+noun_phrases+sentiment+classify()+correct()+parse()+ngrams()Word+string: str+pos_tag: str+definitions+synsets+singularize()+pluralize()+lemmatize()+spellcheck()+correct()WordList+words: list+count()+pluralize()+singularize()+lemmatize()Sentence+string: str+start_index: int+end_index: int+words+tags+sentiment+parse()Blobber+tokenizer+pos_tagger+np_extractor+analyzer+parser+classifier+call(text)\n+pos_tagger\n+np_extractor\n+classifier\n+noun_phrases\n+classify()\n+string: str\n+pos_tag: str\n+definitions\n+singularize()\n+pluralize()\n+lemmatize()\n+spellcheck()\n+words: list\n+pluralize()\n+singularize()\n+lemmatize()\n+string: str\n+start_index: int\n+end_index: int\n+pos_tagger\n+np_extractor\n+classifier\n+call(text)\nThe architecture follows a hierarchical model:\nBaseBlob: The abstract base class that provides common functionality for text processing.\nTextBlob: The main class users interact with, extending BaseBlob with additional functionality.\nSentence: Represents a single sentence within a TextBlob.\nWord: Represents a single word with methods for inflection, lemmatization, etc.\nWordList: A collection of Word objects with methods for plural/singular forms and more.\nBlobber: A factory class for creating TextBlob instances with consistent configurations.\nSources:tests/test_blob.py231-252tests/test_blob.py851-951tests/test_blob.py968-1017\nNLP Pipeline\nTextBlob processes text through a pipeline of operations, with each step handling a specific NLP task. The output of one operation often serves as input to subsequent operations, creating a flexible processing chain.\nTextBlob Processing Pipeline Diagram\nNLP ComponentsTextBlob NLP PipelineRaw TextTextBlobTokenizationWordsSentencesPart-of-Speech TaggingNoun Phrase ExtractionSentiment AnalysisParsingClassificationWord InflectionSpelling CorrectionWordNet IntegrationPluggable ComponentsTokenizersPOS TaggersNP ExtractorsSentiment AnalyzersParsersClassifiersProcessing Results\nNLP Components\nTextBlob NLP Pipeline\nTokenization\nPart-of-Speech Tagging\nNoun Phrase Extraction\nSentiment Analysis\nClassification\nWord Inflection\nSpelling Correction\nWordNet Integration\nPluggable Components\nPOS Taggers\nNP Extractors\nSentiment Analyzers\nClassifiers\nProcessing Results\nKey operations in the pipeline include:\nTokenization: Breaking text into words and sentences using a tokenizer.\nPart-of-Speech Tagging: Identifying grammatical parts of speech for each word.\nNoun Phrase Extraction: Identifying noun phrases based on patterns of POS tags.\nSentiment Analysis: Calculating polarity (positive/negative) and subjectivity of text.\nParsing: Creating syntax trees for sentences.\nClassification: Categorizing text into predefined classes.\nWord Operations: Inflection, lemmatization, spelling correction, and WordNet lookups.\nEach of these operations is backed by pluggable components that can be customized or replaced.\nSources:tests/test_blob.py390-407tests/test_blob.py419-436tests/test_blob.py595-596tests/test_blob.py665-673\nComponent System\nTextBlob implements a pluggable component architecture where each NLP task has a base interface and multiple concrete implementations. This design enables flexibility and extensibility.\nComponent Implementation Diagram\n«interface»BaseTagger+tag(text)«interface»BaseNPExtractor+extract(text, tags)«interface»BaseTokenizer+tokenize(text)+itokenize(text)«interface»BaseSentimentAnalyzer+analyze(text)«interface»BaseParser+parse(text)«interface»BaseClassifier+classify(text)+train(data)NLTKTaggerPatternTaggerFastNPExtractorConllExtractorWordTokenizerSentenceTokenizerPatternAnalyzerNaiveBayesAnalyzerNLTKClassifierNaiveBayesClassifierDecisionTreeClassifierMaxEntClassifierPositiveNaiveBayesClassifier\n«interface»\n«interface»\nBaseNPExtractor\n+extract(text, tags)\n«interface»\nBaseTokenizer\n+tokenize(text)\n+itokenize(text)\n«interface»\nBaseSentimentAnalyzer\n+analyze(text)\n«interface»\n+parse(text)\n«interface»\nBaseClassifier\n+classify(text)\n+train(data)\nPatternTagger\nFastNPExtractor\nConllExtractor\nWordTokenizer\nSentenceTokenizer\nPatternAnalyzer\nNaiveBayesAnalyzer\nNLTKClassifier\nNaiveBayesClassifier\nDecisionTreeClassifier\nMaxEntClassifier\nPositiveNaiveBayesClassifier\nThe component system includes:\nTokenizers:WordTokenizer,SentenceTokenizer- For breaking text into units.\nWordTokenizer\nSentenceTokenizer\nPOS Taggers:NLTKTagger,PatternTagger- For assigning parts of speech.\nPatternTagger\nNP Extractors:FastNPExtractor,ConllExtractor- For extracting noun phrases.\nFastNPExtractor\nConllExtractor\nSentiment Analyzers:PatternAnalyzer,NaiveBayesAnalyzer- For analyzing sentiment.\nPatternAnalyzer\nNaiveBayesAnalyzer\nParsers:PatternParser- For parsing sentence structure.\nPatternParser\nClassifiers: Various implementations for text classification.\nEach component can be used independently or as part of the TextBlob pipeline, and users can provide their own implementations.\nSources:tests/test_blob.py15-18tests/test_blob.py485-498tests/test_blob.py470-473tests/test_blob.py472-483tests/test_blob.py452-468\nDefault Components\nTextBlob comes with default implementations for each component type. These defaults provide a good balance between accuracy and performance for general use cases.\nWordTokenizer\nFastNPExtractor\nPatternAnalyzer\nPatternParser\nSources:tests/test_blob.py731-733tests/test_blob.py485-487tests/test_blob.py452-456\nExtension and Customization\nTextBlob is designed to be highly customizable, allowing users to extend its functionality or replace components with their own implementations.\nCustomization Diagram\nExtensionsCore Systemtextblob-somethingtextblob-xxCustom ComponentsCustom TokenizerCustom TaggerCustom NP ExtractorCustom AnalyzerCustom ParserCustom ClassifierUser CodeTextBlobDefault NLP ComponentsWordTokenizerNLTKTaggerFastNPExtractorPatternAnalyzerPatternParserModel ExtensionsLanguage ExtensionsCustomComponents\nCore System\ntextblob-something\ntextblob-xx\nCustom Components\nCustom Tokenizer\nCustom Tagger\nCustom NP Extractor\nCustom Analyzer\nCustom Parser\nCustom Classifier\nDefault NLP Components\nWordTokenizer\nFastNPExtractor\nPatternAnalyzer\nPatternParser\nModel Extensions\nLanguage Extensions\nCustomComponents\nThere are several ways to customize TextBlob:\nComponent Injection: Specify custom components when creating a TextBlob or Blobber instance:\nfromtextblobimportTextBlobfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.taggersimportNLTKTagger# Create a TextBlob with custom componentsblob = TextBlob(\"Some text\", tokenizer=SentenceTokenizer(), pos_tagger=NLTKTagger())\nfromtextblobimportTextBlobfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.taggersimportNLTKTagger# Create a TextBlob with custom componentsblob = TextBlob(\"Some text\", tokenizer=SentenceTokenizer(), pos_tagger=NLTKTagger())\nfromtextblobimportTextBlobfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.taggersimportNLTKTagger# Create a TextBlob with custom componentsblob = TextBlob(\"Some text\", tokenizer=SentenceTokenizer(), pos_tagger=NLTKTagger())\nBlobber Factory: Create a Blobber with custom components for consistent TextBlob creation:\nfromtextblobimportBlobberfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.np_extractorsimportConllExtractor# Create a Blobber with custom componentstb = Blobber(tokenizer=SentenceTokenizer(), np_extractor=ConllExtractor())# Create TextBlobs with the same configurationblob1 = tb(\"Some text\")blob2 = tb(\"More text\")\nfromtextblobimportBlobberfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.np_extractorsimportConllExtractor# Create a Blobber with custom componentstb = Blobber(tokenizer=SentenceTokenizer(), np_extractor=ConllExtractor())# Create TextBlobs with the same configurationblob1 = tb(\"Some text\")blob2 = tb(\"More text\")\nfromtextblobimportBlobberfromtextblob.tokenizersimportSentenceTokenizerfromtextblob.np_extractorsimportConllExtractor# Create a Blobber with custom componentstb = Blobber(tokenizer=SentenceTokenizer(), np_extractor=ConllExtractor())# Create TextBlobs with the same configurationblob1 = tb(\"Some text\")blob2 = tb(\"More text\")\nExtension Packages: Create extension packages for new models or language support.\nSources:tests/test_blob.py995-1004tests/test_blob.py1006-1011tests/test_blob.py1013-1016\nRecent Changes and Version Compatibility\nTextBlob is continually evolving. Recent versions have made several significant changes:\nRemoved translation functionality (use the official Google Translate API instead)\nSupport for Python 3.9-3.13 and nltk>=3.9\nRemoved vendorized modules\nPerformance improvements in text processing\nTextBlob maintains backward compatibility for core functionality while evolving to support newer Python versions and improve performance.\nSources:CHANGELOG.rst4-16CHANGELOG.rst30-32\nTextBlob provides a simple yet powerful interface for NLP tasks, making advanced text processing accessible to Python developers. Its modular architecture, pluggable components, and extensibility make it adaptable to a wide range of use cases, from simple sentiment analysis to more complex text classification and processing tasks.\nFor more detailed information on specific components and usage patterns, refer to the other sections of this documentation.\nSources:README.rst16-17README.rst50-64\nRefresh this wiki\nOn this page\nCore Architecture\nClass Hierarchy Diagram\nNLP Pipeline\nTextBlob Processing Pipeline Diagram\nComponent System\nComponent Implementation Diagram",
+    "model": "gpt-5",
+    "source": "selenium",
     "success": true
   },
   "deepwiki_options": {
     "enabled": true,
-    "model": "gpt-4o"
+    "model": "gpt-5"
   },
   "risk": {
-    "import_feasibility": 0.8,
+    "import_feasibility": 0.9,
     "intrusiveness_risk": "low",
     "complexity": "medium"
   }

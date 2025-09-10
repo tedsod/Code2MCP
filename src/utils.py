@@ -448,24 +448,46 @@ def get_llm_stats() -> dict:
         "llm_available": is_llm_available()
     }
 
-def fetch_deepwiki(url: str, timeout: int = 30) -> dict:
-    try:
-        import requests
-        api = os.getenv("JINA_API_KEY")
-        base = f"https://r.jina.ai/{url}"
-        headers = {}
-        if api:
-            headers = {
-                "Authorization": f"Bearer {api}",
-                "X-Engine": "direct",
-                "X-Return-Format": "markdown",
-            }
-        r = requests.get(base, headers=headers, timeout=timeout)
-        if r.status_code == 200 and r.text:
-            return {"success": True, "content": r.text, "status": r.status_code}
-        return {"success": False, "error": f"status {r.status_code}", "status": r.status_code}
-    except Exception as e:
-        return {"success": False, "error": str(e)}
+def fetch_deepwiki(url: str, timeout: int = 120) -> dict:
+    import requests
+    import time
+    
+    api = os.getenv("JINA_API_KEY")
+    headers = {
+        "X-Cache-Control": "no-cache",
+        "X-Force-Refresh": "true",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache"
+    }
+    if api:
+        headers.update({
+            "Authorization": f"Bearer {api}",
+            "X-Engine": "direct",
+            "X-Return-Format": "markdown",
+        })
+    
+    for attempt in range(5):
+        try:
+            cache_bust_url = f"{url}?t={int(time.time())}&attempt={attempt}"
+            base = f"https://r.jina.ai/{cache_bust_url}"
+            
+            r = requests.get(base, headers=headers, timeout=timeout, verify=False)
+            if r.status_code == 200 and r.text:
+                content = r.text
+                if "Loading..." not in content and len(content) > 50:
+                    return {"success": True, "content": content, "status": r.status_code}
+                elif "Loading..." in content and attempt < 4:
+                    time.sleep(10)
+                    continue
+            
+            return {"success": False, "error": f"status {r.status_code}", "status": r.status_code}
+        except Exception as e:
+            if attempt < 4:
+                time.sleep(10)
+                continue
+            return {"success": False, "error": str(e)}
+    
+    return {"success": False, "error": "Max retries exceeded"}
 
 class RetryConfig:
     def __init__(self, max_retries: int = 3, delay: float = 1.0, backoff: float = 2.0):

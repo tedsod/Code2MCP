@@ -10,6 +10,24 @@ from ..tools.deepwiki_client import get_deepwiki_client
 
 logger = setup_logging()
 
+
+def _is_valid_deepwiki_content(content: str) -> bool:
+    if not content or len(content.strip()) < 50:
+        return False
+    
+    loading_indicators = ["Loading...", "loading", "Please wait", "Analyzing", "Processing"]
+    if any(indicator in content for indicator in loading_indicators):
+        return False
+    
+    valid_indicators = ["Analysis", "Repository", "Functions", "Classes", "Dependencies", "Features", "Description", "Overview"]
+    if any(indicator in content for indicator in valid_indicators):
+        return True
+    
+    if len(content) > 200 and not content.strip().startswith("Warning:"):
+        return True
+    
+    return False
+
 def _scan_python_packages(root_dir: str) -> List[str]:
     logger.info(f"Starting Python package scan, root directory: {root_dir}")
     packages: List[str] = []
@@ -102,10 +120,10 @@ def _analyze_with_llm(llm_service, repo_url: str, summary: Dict[str, Any], packa
         deepwiki_url = repo_url.replace("github.com", "deepwiki.com") if "github.com" in repo_url else repo_url
         
         deepwiki_info = ""
-        if deepwiki_analysis.get("success") and deepwiki_analysis.get("analysis"):
+        if deepwiki_analysis.get("success") and deepwiki_analysis.get("content") and _is_valid_deepwiki_content(deepwiki_analysis.get("content", "")):
             deepwiki_info = f"""
 DeepWiki Analysis Results:
-{deepwiki_analysis.get("analysis", "")}
+{deepwiki_analysis.get("content", "")}
 """
         elif deepwiki_analysis.get("status") == "failed":
             deepwiki_info = f"""
@@ -318,12 +336,17 @@ def analysis_node(state: Dict[str, Any]) -> Dict[str, Any]:
             dw_url = repo_url.replace("github.com", "deepwiki.com") if "github.com" in repo_url else repo_url
             r = fetch_deepwiki(dw_url)
             if r.get("success") and r.get("content"):
-                deepwiki_analysis = deepwiki_analysis or {}
-                deepwiki_analysis["content"] = r.get("content")
-                deepwiki_analysis["status"] = deepwiki_analysis.get("status", "ok")
-                logger.info("Jina fetch success")
-    except Exception:
-        pass
+                content = r.get("content")
+                if content and len(content.strip()) > 50:
+                    deepwiki_analysis = deepwiki_analysis or {}
+                    deepwiki_analysis["content"] = content
+                    deepwiki_analysis["source"] = "jina_api"
+                    deepwiki_analysis["status"] = deepwiki_analysis.get("status", "ok")
+                    logger.info("Jina fetch success - content updated")
+                else:
+                    logger.warning(f"Jina content too short or empty, length: {len(content) if content else 0}")
+    except Exception as e:
+        logger.error(f"Jina fetch failed: {e}")
     
     logger.info("Starting LLM service...")
     llm_service = get_llm_service()

@@ -1,72 +1,101 @@
 # TextBlob MCP (Model Context Protocol) Service
 
-## Project Overview
+## Project Introduction
 
-TextBlob is a Python library for processing textual data, focusing on simplifying Natural Language Processing (NLP) tasks. It provides an easy-to-use API for performing various NLP operations, such as part-of-speech tagging, sentiment analysis, noun phrase extraction, and more. TextBlob is suitable for rapid prototyping and educational purposes, and has the potential to be converted into an MCP (Model Context Protocol) service.
+TextBlob is a Python library designed for processing textual data. It provides a simple and intuitive API for common natural language processing (NLP) tasks, including sentiment analysis, noun phrase extraction, tokenization, part-of-speech tagging, and text classification. Built on top of robust libraries like NLTK and Pattern, TextBlob simplifies complex NLP operations for developers.
 
-## Installation
+## Installation Method
 
-To use the TextBlob service, ensure you have the following dependencies installed in your environment:
+To install TextBlob, ensure you have Python 3.9 or later installed. TextBlob requires the following dependencies:
+- `nltk`
+- `numpy`
+- `pattern`  
+Optional dependency:
+- `scikit-learn` (for advanced classification tasks)
 
-- Python
-- NLTK
-- Pattern
-
-You can install TextBlob via pip with the following command:
-
+Install TextBlob using pip:
 ```
 pip install textblob
 ```
 
+Additionally, download the necessary NLTK corpora:
+```
+python -m textblob.download_corpora
+```
+
 ## Quick Start
 
-Here are examples of how to call TextBlob's main features:
+Here is a quick example to get started with TextBlob MCP (Model Context Protocol):
 
-1. Create a TextBlob object to process text.
-2. Use the Word and WordList classes for word operations.
-3. Use the Sentence class for sentence-level operations.
-4. Use the Blobber factory class to support batch processing.
-
-Example code:
-
+1. Create a `TextBlob` object:
 ```
 from textblob import TextBlob
 
-text = "TextBlob is a great library!"
+text = "TextBlob makes NLP simple and intuitive."
 blob = TextBlob(text)
-
-# Part-of-speech tagging
-print(blob.tags)
-
-# Sentiment analysis
-print(blob.sentiment)
-
-# Noun phrase extraction
-print(blob.noun_phrases)
 ```
 
-## Available Tools and Endpoints
+2. Perform common NLP tasks:
+- Sentiment Analysis:
+```
+blob.sentiment
+```
+- Noun Phrase Extraction:
+```
+blob.noun_phrases
+```
+- Tokenization:
+```
+blob.words
+blob.sentences
+```
+- Part-of-Speech Tagging:
+```
+blob.tags
+```
+- Text Classification:
+```
+from textblob.classifiers import NaiveBayesClassifier
 
-TextBlob provides the following main functional endpoints:
+train_data = [("I love this library!", "pos"), ("I hate bugs.", "neg")]
+classifier = NaiveBayesClassifier(train_data)
+classifier.classify("This is amazing!")
+```
 
-- **TextBlob Class**: The main interface class for processing text.
-- **Word and WordList Classes**: For operations on words and lists of words.
-- **Sentence Class**: For sentence-level operations.
-- **Blobber Factory Class**: Supports batch processing of TextBlob objects.
-- **Part-of-Speech Tagger**: Identifies the part of speech of words in the text.
-- **Noun Phrase Extractor**: Extracts noun phrases from the text.
-- **Sentiment Analyzer**: Analyzes the sentiment polarity of the text.
+## Available Tools and Endpoints List
+
+TextBlob MCP provides the following tools and services:
+
+1. **TextBlob Class**  
+   - Core service for text processing. Provides methods for sentiment analysis, noun phrase extraction, tokenization, and more.
+
+2. **WordTokenizer and SentenceTokenizer**  
+   - Services for splitting text into words and sentences.
+
+3. **Part-of-Speech Tagging (PerceptronTagger)**  
+   - Assigns grammatical parts of speech to words.
+
+4. **Sentiment Analysis (PatternAnalyzer, NaiveBayesAnalyzer)**  
+   - Calculates polarity (positive/negative) and subjectivity of text.
+
+5. **Text Classification (NaiveBayesClassifier)**  
+   - Categorizes text into predefined classes.
+
+6. **Utility Services**  
+   - Includes functions for text preprocessing, such as punctuation stripping and case normalization.
 
 ## Common Issues and Notes
 
-- **Dependency Issues**: Ensure that the NLTK and Pattern libraries are installed to support all features.
-- **Environment Configuration**: It is recommended to use a virtual environment to manage dependencies.
-- **Performance Considerations**: Pay attention to performance optimization when processing large-scale text.
-- **Extensibility**: TextBlob is designed to be modular, allowing users to extend and customize its functionality.
+- **Dependencies**: Ensure all required dependencies (`nltk`, `numpy`, `pattern`) are installed. Optional dependencies like `scikit-learn` may be needed for advanced classification tasks.
+- **Environment**: TextBlob supports Python 3.9 and later. Compatibility with older versions is not guaranteed.
+- **Performance**: While TextBlob is designed for simplicity, it may not be suitable for high-performance or large-scale NLP tasks. Consider using specialized libraries for such use cases.
+- **Corpora**: Downloading NLTK corpora is mandatory for certain functionalities like tagging and sentiment analysis.
 
-## Reference Links and Documentation
+## Reference Links or Documentation
 
 - [TextBlob GitHub Repository](https://github.com/sloria/TextBlob)
-- [TextBlob Official Documentation](https://textblob.readthedocs.io/en/dev/)
+- [Official Documentation](https://textblob.readthedocs.io/en/dev/)
+- [NLTK Documentation](https://www.nltk.org/)
+- [Pattern Library](https://github.com/clips/pattern)
 
-Through the links above, you can get more detailed information and usage guides for TextBlob.
+For further details, refer to the official documentation and explore advanced features like customization and extension services.

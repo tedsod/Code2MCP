@@ -1,118 +1,156 @@
 import os
 import sys
 
+# Path settings
 source_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "source")
 sys.path.insert(0, source_path)
 
+# Necessary imports
 from fastmcp import FastMCP
-from src.textblob import TextBlob, Word, Sentence, Blobber
+from src.textblob import blob, classifiers, decorators, formats, inflect, np_extractors, parsers, sentiments, taggers, tokenizers, utils
 
+# Initialize FastMCP service
 mcp = FastMCP("textblob_service")
 
-@mcp.tool(name="analyze_sentiment", description="Analyze the sentiment of a given text.")
-def analyze_sentiment(text):
+@mcp.tool(name="analyze_blob", description="Analyze text using TextBlob.")
+def analyze_blob(text: str) -> dict:
     """
-    Analyze the sentiment of the provided text using TextBlob.
+    Analyze text using TextBlob.
 
     Parameters:
-    text (str): The text to analyze.
+        text (str): The input text to analyze.
 
     Returns:
-    dict: A dictionary containing success, result, and error fields.
+        dict: A dictionary containing success, result, or error fields.
     """
     try:
-        blob = TextBlob(text)
-        sentiment = blob.sentiment
-        return {"success": True, "result": {"polarity": sentiment.polarity, "subjectivity": sentiment.subjectivity}, "error": None}
+        blob_instance = blob.TextBlob(text)
+        result = {
+            "sentences": [str(sentence) for sentence in blob_instance.sentences],
+            "words": list(blob_instance.words),
+            "tags": blob_instance.tags,
+            "noun_phrases": list(blob_instance.noun_phrases),
+            "sentiment": blob_instance.sentiment._asdict()
+        }
+        return {"success": True, "result": result, "error": None}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}
 
-@mcp.tool(name="extract_noun_phrases", description="Extract noun phrases from a given text.")
-def extract_noun_phrases(text):
+@mcp.tool(name="classify_text", description="Classify text using a trained classifier.")
+def classify_text(text: str, model_path: str) -> dict:
     """
-    Extract noun phrases from the provided text using TextBlob.
+    Classify text using a trained classifier.
 
     Parameters:
-    text (str): The text to extract noun phrases from.
+        text (str): The input text to classify.
+        model_path (str): Path to the trained classifier model.
 
     Returns:
-    dict: A dictionary containing success, result, and error fields.
+        dict: A dictionary containing success, result, or error fields.
     """
     try:
-        blob = TextBlob(text)
-        noun_phrases = blob.noun_phrases
-        return {"success": True, "result": noun_phrases, "error": None}
+        classifier = classifiers.NaiveBayesClassifier.load(model_path)
+        classification = classifier.classify(text)
+        return {"success": True, "result": {"classification": classification}, "error": None}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}
 
-@mcp.tool(name="tag_parts_of_speech", description="Tag parts of speech in a given text.")
-def tag_parts_of_speech(text):
+@mcp.tool(name="extract_noun_phrases", description="Extract noun phrases from text.")
+def extract_noun_phrases(text: str) -> dict:
     """
-    Tag parts of speech in the provided text using TextBlob.
+    Extract noun phrases from text.
 
     Parameters:
-    text (str): The text to tag parts of speech.
+        text (str): The input text to extract noun phrases from.
 
     Returns:
-    dict: A dictionary containing success, result, and error fields.
+        dict: A dictionary containing success, result, or error fields.
     """
     try:
-        blob = TextBlob(text)
-        pos_tags = blob.tags
-        return {"success": True, "result": pos_tags, "error": None}
+        blob_instance = blob.TextBlob(text)
+        noun_phrases = list(blob_instance.noun_phrases)
+        return {"success": True, "result": {"noun_phrases": noun_phrases}, "error": None}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}
 
-@mcp.tool(name="pluralize_word", description="Pluralize a given word.")
-def pluralize_word(word):
+@mcp.tool(name="correct_spelling", description="Correct spelling in the given text.")
+def correct_spelling(text: str) -> dict:
     """
-    Pluralize the provided word using TextBlob's Word class.
+    Correct spelling in the given text.
 
     Parameters:
-    word (str): The word to pluralize.
+        text (str): The input text to correct spelling.
 
     Returns:
-    dict: A dictionary containing success, result, and error fields.
+        dict: A dictionary containing success, result, or error fields.
     """
     try:
-        word_obj = Word(word)
-        plural_word = word_obj.pluralize()
-        return {"success": True, "result": plural_word, "error": None}
+        blob_instance = blob.TextBlob(text)
+        corrected_text = str(blob_instance.correct())
+        return {"success": True, "result": {"corrected_text": corrected_text}, "error": None}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}
 
-@mcp.tool(name="health_check", description="Check the health of the service.")
-def health_check():
+@mcp.tool(name="tokenize_text", description="Tokenize text into words and sentences.")
+def tokenize_text(text: str) -> dict:
     """
-    Perform a health check of the service.
+    Tokenize text into words and sentences.
+
+    Parameters:
+        text (str): The input text to tokenize.
 
     Returns:
-    dict: A dictionary containing success, result, and error fields.
+        dict: A dictionary containing success, result, or error fields.
     """
     try:
-        return {"success": True, "result": "Service is healthy", "error": None}
+        tokenizer = tokenizers.WordTokenizer()
+        word_tokens = tokenizer.tokenize(text)
+        sentence_tokens = tokenizers.SentenceTokenizer().tokenize(text)
+        return {"success": True, "result": {"words": word_tokens, "sentences": sentence_tokens}, "error": None}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}
 
-@mcp.tool(name="version_info", description="Get the version information of the service.")
-def version_info():
+@mcp.tool(name="analyze_sentiment", description="Perform sentiment analysis on text.")
+def analyze_sentiment(text: str) -> dict:
     """
-    Get the version information of the service.
+    Perform sentiment analysis on text.
+
+    Parameters:
+        text (str): The input text to analyze sentiment.
 
     Returns:
-    dict: A dictionary containing success, result, and error fields.
+        dict: A dictionary containing success, result, or error fields.
     """
     try:
-        version = "1.0.0"
-        return {"success": True, "result": version, "error": None}
+        sentiment_analyzer = sentiments.PatternAnalyzer()
+        sentiment = sentiment_analyzer.analyze(text)._asdict()
+        return {"success": True, "result": {"sentiment": sentiment}, "error": None}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}
 
-def create_app():
+@mcp.tool(name="parse_text", description="Parse text into syntax trees.")
+def parse_text(text: str) -> dict:
+    """
+    Parse text into syntax trees.
+
+    Parameters:
+        text (str): The input text to parse.
+
+    Returns:
+        dict: A dictionary containing success, result, or error fields.
+    """
+    try:
+        parser = parsers.PatternParser()
+        parsed_result = parser.parse(text)
+        return {"success": True, "result": {"parsed_text": parsed_result}, "error": None}
+    except Exception as e:
+        return {"success": False, "result": None, "error": str(e)}
+
+def create_app() -> FastMCP:
     """
     Create and return the FastMCP application instance.
 
     Returns:
-    FastMCP: The FastMCP application instance.
+        FastMCP: The initialized FastMCP instance.
     """
     return mcp
