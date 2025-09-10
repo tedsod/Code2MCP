@@ -28,6 +28,66 @@ def _run(cmd: list[str], cwd: str | None = None, timeout: int = 1800) -> tuple[i
     except Exception as e:
         return 1, "", str(e)
 
+def _parse_environment_yml(yml_path: str) -> dict:
+    data = {"channels": [], "conda_deps": [], "pip_deps": [], "python": None}
+    if not yml_path or not os.path.isfile(yml_path):
+        return data
+    try:
+        try:
+            import yaml  # type: ignore
+            with open(yml_path, 'r', encoding='utf-8') as f:
+                obj = yaml.safe_load(f) or {}
+            ch = obj.get("channels") or []
+            if isinstance(ch, list):
+                data["channels"] = [str(x) for x in ch if x]
+            deps = obj.get("dependencies") or []
+            conda_deps: list[str] = []
+            pip_deps: list[str] = []
+            if isinstance(deps, list):
+                for d in deps:
+                    if isinstance(d, str):
+                        conda_deps.append(d)
+                        if d.strip().startswith("python=") or d.strip().startswith("python=="):
+                            data["python"] = d.split("=", 1)[1].lstrip("=")
+                    elif isinstance(d, dict) and "pip" in d and isinstance(d["pip"], list):
+                        for p in d["pip"]:
+                            if isinstance(p, str):
+                                pip_deps.append(p)
+            data["conda_deps"] = conda_deps
+            data["pip_deps"] = pip_deps
+        except Exception:
+            import re, io
+            text = open(yml_path, 'r', encoding='utf-8').read()
+            ch_block = re.search(r"(?ms)^channels:\s*\n([\s\S]*?)(?=^\S|\Z)", text)
+            if ch_block:
+                for line in io.StringIO(ch_block.group(1)):
+                    s = line.strip()
+                    if s.startswith('-'):
+                        data["channels"].append(s.lstrip('-').strip())
+            deps_block = re.search(r"(?ms)^dependencies:\s*\n([\s\S]*?)(?=^\S|\Z)", text)
+            pip_block = re.search(r"(?ms)^\s*-\s*pip\s*:\s*\n([\s\S]*?)(?=^\s*-[^\s]|^\S|\Z)", text)
+            if deps_block:
+                for line in io.StringIO(deps_block.group(1)):
+                    if 'pip:' in line:
+                        continue
+                    s = line.strip()
+                    if s.startswith('-'):
+                        val = s.lstrip('-').strip()
+                        if val:
+                            data["conda_deps"].append(val)
+                            if val.startswith("python=") or val.startswith("python=="):
+                                data["python"] = val.split("=", 1)[1].lstrip('=')
+            if pip_block:
+                for line in io.StringIO(pip_block.group(1)):
+                    s = line.strip()
+                    if s.startswith('-'):
+                        val = s.lstrip('-').strip()
+                        if val:
+                            data["pip_deps"].append(val)
+    except Exception:
+        pass
+    return data
+
 def _install_pip_from_env_yml(python_cmd: list[str], yml_paths: list[str], cwd: str):
     try:
         import re, io, os
@@ -191,77 +251,64 @@ def _create_conda_env(env_name: str, repo_root: str, deps: Dict[str, Any]) -> Di
             
         if env_yml_path:
             logger.info(f"Creating conda environment using environment.yml: {env_name}")
-            code, out, err = _run([conda_exe, "env", "create", "-n", env_name, "-f", env_yml_path])
+            code, out, err = _run([conda_exe, "env", "create", "-n", env_name, "-f", env_yml_path, "--solver=libmamba"]) 
             if code == 0:
                 env_info["files"]["environment_yml"] = env_yml_path
-                logger.info(f"Conda environment created successfully: {env_name}")
                 return env_info
-            else:
-                logger.warning(f"Failed to create conda environment: {err or out}")
+            code2, out2, err2 = _run([conda_exe, "env", "update", "-n", env_name, "-f", env_yml_path, "--prune", "--solver=libmamba"]) 
+            if code2 == 0:
+                env_info["files"]["environment_yml"] = env_yml_path
+                return env_info
+            yml_data = _parse_environment_yml(env_yml_path)
+            preferred_py = yml_data.get("python") or "3.10"
+            code3, out3, err3 = _run([conda_exe, "create", "-n", env_name, f"python={preferred_py}", "--yes"]) 
+            if code3 == 0:
+                env_info["files"]["environment_yml"] = env_yml_path
+                env_info["python"] = preferred_py
+                install_args = [conda_exe, "run", "-n", env_name, "conda", "install", "-y"]
+                channels = yml_data.get("channels") or []
+                for ch in channels:
+                    install_args.extend(["-c", ch])
+                conda_deps = [d for d in (yml_data.get("conda_deps") or []) if d]
+                if conda_deps:
+                    _run(install_args + conda_deps, cwd=repo_root, timeout=3600)
+                pip_deps = yml_data.get("pip_deps") or []
+                if pip_deps:
+                    _run([conda_exe, "run", "-n", env_name, "python", "-m", "pip", "install"] + pip_deps, cwd=repo_root, timeout=3600)
+                return env_info
+            logger.warning(f"Failed to honor environment.yml: {err3 or err2 or err or out3 or out2 or out}")
+            return None
     
     logger.info(f"Creating base conda environment: {env_name}")
     code, out, err = _run([conda_exe, "create", "-n", env_name, "python=3.10", "--yes"])
     if code == 0:
         logger.info(f"Base conda environment created successfully: {env_name}")
-        
-        if deps.get("pyproject"):
-            pyproject_path = None
-            pyproject_root = os.path.join(repo_root, "pyproject.toml")
-            source_pyproject = os.path.join(repo_root, "source", "pyproject.toml")
-            
-            if os.path.exists(pyproject_root):
-                pyproject_path = pyproject_root
-            elif os.path.exists(source_pyproject):
-                pyproject_path = source_pyproject
-                
-            if pyproject_path:
-                logger.info("Installing pyproject.toml dependencies in conda environment")
-                code, out, err = _run([conda_exe, "run", "-n", env_name, "pip", "install", "-e", os.path.dirname(pyproject_path)])
-                if code == 0:
-                    env_info["files"]["pyproject_toml"] = pyproject_path
-                    logger.info("pyproject.toml dependencies installed successfully")
-                else:
-                    logger.warning(f"Failed to install pyproject.toml dependencies: {err or out}")
-                    try:
-                        import tomllib
-                    except ImportError:
-                        import tomli as tomllib
-                    
-                    try:
-                        with open(pyproject_path, 'rb') as f:
-                            pyproject_data = tomllib.load(f)
-                        
-                        dependencies = pyproject_data.get("project", {}).get("dependencies", [])
-                        if dependencies:
-                            for dep in dependencies:
-                                code, out, err = _run([conda_exe, "run", "-n", env_name, "pip", "install", dep])
-                                if code != 0:
-                                    logger.warning(f"Failed to install dependency {dep}: {err or out}")
-                    except Exception as e:
-                        logger.warning(f"Failed to parse pyproject.toml: {e}")
-        
-        if deps.get("has_requirements_txt"):
-            req_txt = os.path.join(repo_root, "requirements.txt")
-            source_req_txt = os.path.join(repo_root, "source", "requirements.txt")
-            
-            req_txt_path = None
-            if os.path.exists(req_txt):
-                req_txt_path = req_txt
-            elif os.path.exists(source_req_txt):
-                req_txt_path = source_req_txt
-                
-            if req_txt_path:
-                logger.info("Installing pip dependencies in conda environment")
-                code, out, err = _run([conda_exe, "run", "-n", env_name, "pip", "install", "-r", req_txt_path])
-                if code == 0:
-                    env_info["files"]["requirements_txt"] = req_txt_path
-                    logger.info("Pip dependencies installed successfully")
-                else:
-                    logger.warning(f"Failed to install pip dependencies: {err or out}")
-
-        yml_paths = [os.path.join(repo_root, "environment.yml"), os.path.join(repo_root, "source", "environment.yml")]
-        python_cmd = [conda_exe, "run", "-n", env_name, "python"]
-        _install_pip_from_env_yml(python_cmd, yml_paths, repo_root)
+        if not deps.get("has_environment_yml"):
+            if deps.get("pyproject"):
+                pyproject_path = None
+                pyproject_root = os.path.join(repo_root, "pyproject.toml")
+                source_pyproject = os.path.join(repo_root, "source", "pyproject.toml")
+                if os.path.exists(pyproject_root):
+                    pyproject_path = pyproject_root
+                elif os.path.exists(source_pyproject):
+                    pyproject_path = source_pyproject
+                if pyproject_path:
+                    code, out, err = _run([conda_exe, "run", "-n", env_name, "pip", "install", "-e", os.path.dirname(pyproject_path)])
+                    if code == 0:
+                        env_info["files"]["pyproject_toml"] = pyproject_path
+            if deps.get("has_requirements_txt"):
+                req_txt = os.path.join(repo_root, "requirements.txt")
+                source_req_txt = os.path.join(repo_root, "source", "requirements.txt")
+                req_txt_path = None
+                if os.path.exists(req_txt):
+                    req_txt_path = req_txt
+                elif os.path.exists(source_req_txt):
+                    req_txt_path = source_req_txt
+                if req_txt_path:
+                    _run([conda_exe, "run", "-n", env_name, "pip", "install", "-r", req_txt_path])
+            yml_paths = [os.path.join(repo_root, "environment.yml"), os.path.join(repo_root, "source", "environment.yml")]
+            python_cmd = [conda_exe, "run", "-n", env_name, "python"]
+            _install_pip_from_env_yml(python_cmd, yml_paths, repo_root)
         
         return env_info
     else:
