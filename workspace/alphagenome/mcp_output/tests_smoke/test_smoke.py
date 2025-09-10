@@ -10,13 +10,13 @@ if os.path.exists(source_dir):
 
 
 try:
-    importlib.import_module("src.dateutil")
-    print("OK - Successfully imported src.dateutil")
+    importlib.import_module("src.alphagenome")
+    print("OK - Successfully imported src.alphagenome")
 except ImportError as e:
-    print(f"Failed to import src.dateutil: {e}")
+    print(f"Failed to import src.alphagenome: {e}")
     fallback_packages = []
 
-    fallback_packages = ['dateutil', 'src.dateutil']
+    fallback_packages = ['alphagenome', 'src.alphagenome']
 
     for pkg in fallback_packages:
         try:

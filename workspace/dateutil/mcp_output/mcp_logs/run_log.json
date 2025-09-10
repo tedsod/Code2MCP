@@ -1,23 +1,23 @@
 {
-  "timestamp": 1755843993.099231,
+  "timestamp": 1757516399.2507167,
   "node": "RunNode",
   "test_result": {
     "passed": true,
     "report_path": null,
     "stdout": "",
-    "stderr": "                                │\n\n│    📦 Transport:       STDIO                                               │\n\n│                                                                            │\n\n│    📚 Docs:            https://gofastmcp.com                               │\n\n│    🚀 Deploy:          https://fastmcp.cloud                               │\n\n│                                                                            │\n\n│    🏎️  FastMCP version: 2.11.3                                              │\n\n│    🤝 MCP version:     1.13.0                                              │\n\n│                                                                            │\n\n└────────────────────────────────────────────────────────────────────────────┘\n\n\n\n\n\n[08/22/25 14:26:32] INFO     Starting MCP server                 server.py:1445\n\n                             'dateutil_service' with transport                 \n\n                             'stdio'                                           \n\n\n"
+    "stderr": "l_service                       │\n\n│                 📦 Transport:       STDIO                                  │\n\n│                                                                            │\n\n│                 🏎️  FastMCP version: 2.12.2                                 │\n\n│                 🤝 MCP SDK version: 1.13.1                                 │\n\n│                                                                            │\n\n│                 📚 Docs:            https://gofastmcp.com                  │\n\n│                 🚀 Deploy:          https://fastmcp.cloud                  │\n\n│                                                                            │\n\n└────────────────────────────────────────────────────────────────────────────┘\n\n\n\n\n\n[09/10/25 22:59:59] INFO     Starting MCP server                 server.py:1493\n\n                             'dateutil_service' with transport                 \n\n                             'stdio'                                           \n\n\n"
   },
   "run_result": {
     "success": true,
     "test_passed": true,
     "exit_code": 0,
     "stdout": "",
-    "stderr": "                                │\n\n│    📦 Transport:       STDIO                                               │\n\n│                                                                            │\n\n│    📚 Docs:            https://gofastmcp.com                               │\n\n│    🚀 Deploy:          https://fastmcp.cloud                               │\n\n│                                                                            │\n\n│    🏎️  FastMCP version: 2.11.3                                              │\n\n│    🤝 MCP version:     1.13.0                                              │\n\n│                                                                            │\n\n└────────────────────────────────────────────────────────────────────────────┘\n\n\n\n\n\n[08/22/25 14:26:32] INFO     Starting MCP server                 server.py:1445\n\n                             'dateutil_service' with transport                 \n\n                             'stdio'                                           \n\n\n",
-    "timestamp": 1755843993.099231
+    "stderr": "l_service                       │\n\n│                 📦 Transport:       STDIO                                  │\n\n│                                                                            │\n\n│                 🏎️  FastMCP version: 2.12.2                                 │\n\n│                 🤝 MCP SDK version: 1.13.1                                 │\n\n│                                                                            │\n\n│                 📚 Docs:            https://gofastmcp.com                  │\n\n│                 🚀 Deploy:          https://fastmcp.cloud                  │\n\n│                                                                            │\n\n└────────────────────────────────────────────────────────────────────────────┘\n\n\n\n\n\n[09/10/25 22:59:59] INFO     Starting MCP server                 server.py:1493\n\n                             'dateutil_service' with transport                 \n\n                             'stdio'                                           \n\n\n",
+    "timestamp": 1757516399.2507167
   },
   "environment": {
     "type": "conda",
-    "name": "dateutil_843568_env",
+    "name": "dateutil_516170_env",
     "files": {
       "pyproject_toml": "E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\dateutil\\source\\pyproject.toml"
     },
@@ -37,24 +37,26 @@
     },
     "adapter_mode": "import",
     "endpoints": [
-      "health",
-      "version",
       "parse",
-      "isoparse*",
-      "gettz*",
-      "tzutc*",
-      "tzoffset*",
-      "tzlocal*",
-      "tzfile*",
-      "tzwin*",
-      "tzwinlocal*",
+      "isoparse",
+      "parsererror",
+      "gettz",
+      "tzfile",
+      "tzlocal",
+      "tzutc",
+      "tzrange",
+      "tzoffset",
+      "relativedelta",
       "relativedelta",
       "rrule",
-      "rruleset*",
-      "rrulestr*",
+      "rruleset",
+      "rrulestr",
+      "rrule",
+      "rruleset",
       "easter",
-      "today*",
-      "default_tzinfo*"
+      "get_zonefile_instance",
+      "rebuild",
+      "zoneinfofile"
     ],
     "mcp_dir": "E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\dateutil\\mcp_output\\mcp_plugin",
     "tests_dir": "E:\\code\\fastMCP\\fastMCP\\mcp-repo-output\\workspace\\dateutil\\mcp_output\\tests_mcp",

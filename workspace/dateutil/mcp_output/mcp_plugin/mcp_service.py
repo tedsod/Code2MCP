@@ -1,183 +1,101 @@
 import os
 import sys
 
+# Path settings
 source_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "source")
 sys.path.insert(0, source_path)
 
+# Necessary imports
 from fastmcp import FastMCP
-from src.dateutil.parser import parse, isoparse
-from src.dateutil.tz import gettz, tzutc, tzoffset, tzlocal
 from src.dateutil.relativedelta import relativedelta
-from src.dateutil.rrule import rrule, rruleset, rrulestr
+from src.dateutil.rrule import rrule, rruleset
 from src.dateutil.easter import easter
-from src.dateutil.utils import today, default_tzinfo
+from src.dateutil.zoneinfo import get_zonefile_instance, ZoneInfoFile
 
+# Create MCP instance
 mcp = FastMCP("dateutil_service")
 
-@mcp.tool(name="parse_date", description="Parse date string to datetime object")
-def parse_date(date_string):
+@mcp.tool(name="calculate_relative_date", description="Perform relative date arithmetic.")
+def calculate_relative_date(year: int, month: int, day: int, delta_years: int, delta_months: int, delta_days: int) -> dict:
     """
-    Parse date string to datetime object.
+    Calculate a new date by applying relative delta adjustments.
 
     Parameters:
-        date_string (str): Date string to parse.
+        year (int): The base year.
+        month (int): The base month.
+        day (int): The base day.
+        delta_years (int): Number of years to add/subtract.
+        delta_months (int): Number of months to add/subtract.
+        delta_days (int): Number of days to add/subtract.
 
     Returns:
-        dict: Dictionary containing parsing result, format: {'success': bool, 'result': datetime, 'error': str}.
+        dict: A dictionary containing success, result (new date), or error.
     """
     try:
-        result = parse(date_string)
-        return {"success": True, "result": str(result), "error": None}
+        base_date = datetime.date(year, month, day)
+        delta = relativedelta(years=delta_years, months=delta_months, days=delta_days)
+        new_date = base_date + delta
+        return {"success": True, "result": str(new_date), "error": None}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}
 
-@mcp.tool(name="isoparse_date", description="Parse ISO 8601 format date string")
-def isoparse_date(date_string):
+@mcp.tool(name="generate_recurrence_rule", description="Generate recurrence rules based on iCalendar RFC 5545.")
+def generate_recurrence_rule(freq: str, count: int, interval: int) -> dict:
     """
-    Parse ISO 8601 format date string.
+    Generate a list of recurrence dates based on specified rules.
 
     Parameters:
-        date_string (str): ISO 8601 format date string to parse.
+        freq (str): Frequency of recurrence (e.g., 'DAILY', 'WEEKLY', 'MONTHLY').
+        count (int): Number of occurrences.
+        interval (int): Interval between occurrences.
 
     Returns:
-        dict: Dictionary containing parsing result, format: {'success': bool, 'result': datetime, 'error': str}.
+        dict: A dictionary containing success, result (list of dates), or error.
     """
     try:
-        result = isoparse(date_string)
-        return {"success": True, "result": str(result), "error": None}
+        rule = rrule(freq=freq, count=count, interval=interval)
+        dates = list(rule)
+        return {"success": True, "result": [str(date) for date in dates], "error": None}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}
 
-@mcp.tool(name="get_timezone", description="Get specified timezone object")
-def get_timezone(tz_name):
+@mcp.tool(name="calculate_easter_date", description="Calculate the date of Easter Sunday for a given year.")
+def calculate_easter_date(year: int) -> dict:
     """
-    Get specified timezone object.
+    Calculate the date of Easter Sunday for a given year.
 
     Parameters:
-        tz_name (str): Timezone name, e.g., "UTC" or "America/New_York".
+        year (int): The year for which to calculate Easter.
 
     Returns:
-        dict: Dictionary containing timezone object, format: {'success': bool, 'result': tzinfo, 'error': str}.
+        dict: A dictionary containing success, result (Easter date), or error.
     """
     try:
-        result = gettz(tz_name)
-        return {"success": True, "result": str(result), "error": None}
+        easter_date = easter(year)
+        return {"success": True, "result": str(easter_date), "error": None}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}
 
-@mcp.tool(name="calculate_relativedelta", description="Calculate relative time difference")
-def calculate_relativedelta(years=0, months=0, days=0):
+@mcp.tool(name="get_timezone_metadata", description="Retrieve timezone metadata from the database.")
+def get_timezone_metadata() -> dict:
     """
-    Calculate relative time difference.
-
-    Parameters:
-        years (int): Year difference.
-        months (int): Month difference.
-        days (int): Day difference.
+    Retrieve metadata from the timezone database.
 
     Returns:
-        dict: Dictionary containing relative time difference, format: {'success': bool, 'result': relativedelta, 'error': str}.
+        dict: A dictionary containing success, result (metadata), or error.
     """
     try:
-        years = int(years) if years is not None else 0
-        months = int(months) if months is not None else 0
-        days = int(days) if days is not None else 0
-        result = relativedelta(years=years, months=months, days=days)
-        return {"success": True, "result": str(result), "error": None}
+        zonefile_instance = get_zonefile_instance()
+        metadata = zonefile_instance.metadata
+        return {"success": True, "result": metadata, "error": None}
     except Exception as e:
         return {"success": False, "result": None, "error": str(e)}
 
-@mcp.tool(name="generate_rrule", description="Generate repeating rules based on iCalendar standard")
-def generate_rrule(freq, dtstart, count=None, until=None):
+def create_app() -> FastMCP:
     """
-    Generate repeating rules based on iCalendar standard.
-
-    Parameters:
-        freq (str): Frequency, e.g., "DAILY".
-        dtstart (str): Start date string.
-        count (int, optional): Number of repetitions.
-        until (str, optional): End date string.
+    Create and return the FastMCP application instance.
 
     Returns:
-        dict: Dictionary containing repeating rules, format: {'success': bool, 'result': list, 'error': str}.
-    """
-    try:
-        from src.dateutil.rrule import DAILY, WEEKLY, MONTHLY, YEARLY
-        
-        freq_map = {
-            "DAILY": DAILY,
-            "WEEKLY": WEEKLY,
-            "MONTHLY": MONTHLY,
-            "YEARLY": YEARLY
-        }
-        
-        freq_value = freq_map.get(freq.upper(), DAILY)
-        dtstart_parsed = parse(dtstart) if isinstance(dtstart, str) else dtstart
-        count = int(count) if count is not None else None
-        
-        rule = rrule(freq_value, dtstart=dtstart_parsed, count=count, until=until)
-        result = list(rule)
-        return {"success": True, "result": [str(r) for r in result], "error": None}
-    except Exception as e:
-        return {"success": False, "result": None, "error": str(e)}
-
-@mcp.tool(name="calculate_easter", description="Calculate Easter date")
-def calculate_easter(year):
-    """
-    Calculate Easter date for a given year.
-
-    Parameters:
-        year (int): Year.
-
-    Returns:
-        dict: Dictionary containing Easter date, format: {'success': bool, 'result': date, 'error': str}.
-    """
-    try:
-        year = int(year) if year is not None else 2025
-        result = easter(year)
-        return {"success": True, "result": str(result), "error": None}
-    except Exception as e:
-        return {"success": False, "result": None, "error": str(e)}
-
-@mcp.tool(name="get_today", description="Get current date")
-def get_today():
-    """
-    Get current date.
-
-    Returns:
-        dict: Dictionary containing current date, format: {'success': bool, 'result': date, 'error': str}.
-    """
-    try:
-        result = today()
-        return {"success": True, "result": str(result), "error": None}
-    except Exception as e:
-        return {"success": False, "result": None, "error": str(e)}
-
-@mcp.tool(name="health_check", description="Check service health status")
-def health_check():
-    """
-    Check service health status.
-
-    Returns:
-        dict: Dictionary containing health check result, format: {'success': bool, 'result': str, 'error': str}.
-    """
-    return {"success": True, "result": "Service is healthy", "error": None}
-
-@mcp.tool(name="get_version", description="Get service version information")
-def get_version():
-    """
-    Get service version information.
-
-    Returns:
-        dict: Dictionary containing version information, format: {'success': bool, 'result': str, 'error': str}.
-    """
-    return {"success": True, "result": "1.0.0", "error": None}
-
-def create_app():
-    """
-    Create and return FastMCP instance.
-
-    Returns:
-        FastMCP: FastMCP instance.
+        FastMCP: The MCP application instance.
     """
     return mcp

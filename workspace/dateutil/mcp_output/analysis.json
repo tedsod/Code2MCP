@@ -28,112 +28,121 @@
   "llm_analysis": {
     "core_modules": [
       {
-        "package": "source.src.dateutil",
-        "module": "parser",
+        "package": "source.src.dateutil.parser",
+        "module": "_parser",
         "functions": [
           "parse",
-          "isoparse*"
-        ],
-        "classes": [],
-        "description": "Provides date string parsing functionality, including support for ISO 8601 format.",
-        "import_confidence": "medium"
-      },
-      {
-        "package": "source.src.dateutil",
-        "module": "tz",
-        "functions": [
-          "gettz*",
-          "tzutc*",
-          "tzoffset*",
-          "tzlocal*"
+          "isoparse"
         ],
         "classes": [
-          "tzfile*",
-          "tzwin*",
-          "tzwinlocal*"
+          "ParserError"
         ],
-        "description": "Provides timezone handling functionality, including timezone conversion and management.",
-        "import_confidence": "low"
+        "description": "Handles flexible date/time string parsing, including ISO 8601 compliance."
       },
       {
-        "package": "source.src.dateutil",
+        "package": "source.src.dateutil.tz",
+        "module": "tz",
+        "functions": [
+          "gettz",
+          "tzfile",
+          "tzlocal",
+          "tzutc"
+        ],
+        "classes": [
+          "tzrange",
+          "tzoffset"
+        ],
+        "description": "Provides timezone handling, including local timezone detection and UTC support."
+      },
+      {
+        "package": "source.src.dateutil.relativedelta",
         "module": "relativedelta",
-        "functions": [],
+        "functions": [
+          "relativedelta"
+        ],
         "classes": [
           "relativedelta"
         ],
-        "description": "Implements relative time calculations, such as adding or subtracting months, days, etc.",
-        "import_confidence": "high"
+        "description": "Implements relative date arithmetic for operations like adding months or years."
       },
       {
-        "package": "source.src.dateutil",
+        "package": "source.src.dateutil.rrule",
         "module": "rrule",
         "functions": [
           "rrule",
-          "rruleset*",
-          "rrulestr*"
+          "rruleset",
+          "rrulestr"
         ],
-        "classes": [],
-        "description": "Supports event recurrence rules based on iCalendar standard.",
-        "import_confidence": "low"
+        "classes": [
+          "rrule",
+          "rruleset"
+        ],
+        "description": "Handles recurrence rules based on iCalendar RFC 5545 specifications."
       },
       {
-        "package": "source.src.dateutil",
+        "package": "source.src.dateutil.easter",
         "module": "easter",
         "functions": [
           "easter"
         ],
         "classes": [],
-        "description": "Dedicated module for calculating Easter dates.",
-        "import_confidence": "high"
+        "description": "Calculates the date of Easter Sunday for a given year."
       },
       {
-        "package": "source.src.dateutil",
-        "module": "utils",
+        "package": "source.src.dateutil.zoneinfo",
+        "module": "zoneinfo",
         "functions": [
-          "today*",
-          "default_tzinfo*"
+          "get_zonefile_instance",
+          "rebuild"
         ],
-        "classes": [],
-        "description": "Provides auxiliary utility functions for date and time.",
-        "import_confidence": "low"
+        "classes": [
+          "ZoneInfoFile"
+        ],
+        "description": "Manages timezone database updates and metadata verification."
       }
     ],
-    "cli_commands": [],
+    "cli_commands": [
+      {
+        "name": "updatezinfo",
+        "module": "source.updatezinfo",
+        "description": "Automates updates to the timezone database using the IANA Olson database."
+      }
+    ],
     "import_strategy": {
       "primary": "import",
       "fallback": "blackbox",
-      "confidence": 0.9
+      "confidence": 0.85
     },
     "dependencies": {
       "required": [
-        "six",
-        "pytz",
-        "setuptools"
+        "datetime",
+        "six"
       ],
-      "optional": []
+      "optional": [
+        "tzdata"
+      ]
     },
     "risk_assessment": {
-      "import_feasibility": 0.9,
+      "import_feasibility": 0.85,
       "intrusiveness_risk": "low",
-      "complexity": "simple"
+      "complexity": "medium"
     }
   },
   "deepwiki_analysis": {
     "repo_url": "https://github.com/dateutil/dateutil",
     "repo_name": "dateutil",
-    "analysis": "### GitHub Repository Analysis: dateutil\n\n#### 1. What are the main functions and purposes of this repository?\n\n`dateutil` is a widely used Python library designed to simplify date and time operations. It extends the standard `datetime` module to provide more powerful and flexible features. Main purposes include:\n\n- **Date Parsing**: Supports parsing of various date string formats.\n- **Timezone Handling**: Supports timezone conversion and management.\n- **Relative Time Calculation**: Implements dynamic date calculations through the `relativedelta` module (e.g., adding or subtracting months, days, etc.).\n- **Recurrence Rules**: Supports event recurrence rules based on the iCalendar standard.\n- **Special Date Calculations**: Such as calculating Easter dates.\n- **Compatibility**: Seamlessly integrates with Python's standard `datetime` module.\n\n#### 2. What are the core modules and entry points of this repository?\n\n- **Parser Module**: Parses various formats of date strings.\n- **Timezone Handling**: Provides timezone data management and conversion.\n- **Relative Delta**: Calculates relative date/time shifts.\n- **Recurrence Rules**: iCalendar-based recurrence rules.\n- **Easter Calculations**: Computes Easter dates.\n\nCore entry points are typically through submodules, for example:\n```python\nfrom dateutil import parser, tz, relativedelta, rrule\n```\n\n#### 3. What are the main technology stack and dependencies used by this repository?\n\n- **Language**: Python\n- **Dependencies**:\n  - `six`: Python 2/3 compatibility (legacy).\n  - `pytz`: Timezone data management.\n  - `setuptools`: Build and packaging.\n- **Testing Frameworks**: `pytest`, `tox`\n- **CI**: GitHub Actions or similar.\n\n#### 4. Is this project suitable for conversion to an MCP (Model Context Protocol) service? Why?\n\n**Advantages:**\n1. **Modular functionality** (parsing, timezone, relativedelta) fits service decomposition.\n2. **Broad demand**: Date/time handling is widely needed across applications.\n3. **Lightweight dependencies**: Low complexity overhead.\n4. **Standardized interfaces**: Functions can be exposed via clear APIs.\n\n**Challenges:**\n1. **Performance**: Python may be slower than native languages for heavy workloads.\n2. **Timezone data management**: Requires regular updates and synchronization.\n3. **State management**: Recurrence rules and complex scenarios may involve state.\n\n**Recommendations:**\n- Suitable modules: Parser, Timezone Handling, Relative Delta, Recurrence Rules.\n- Service design: Expose via REST or gRPC; use JSON/Protobuf I/O; regularly update timezone data with versioning.\n\n**Summary:**\n`dateutil` is well-suited for conversion to an MCP service due to its modular design and broad applicability. Focus on performance, timezone data updates, and state design during conversion.",
-    "model": "gpt-4o",
-    "source": "llm_direct_analysis",
+    "content": "dateutil/dateutil\nCore Modules Overview\nKey Features and Standards Compliance\nCore Library Modules\nParser Module\nTimezone Handling\nRelative Delta\nRecurrence Rules\nEaster Calculations\nBuild System and Packaging\nPackage Configuration\nVersion Management\nDistribution and Release\nDevelopment Workflow\nTesting Framework\nContinuous Integration\nCode Quality and Formatting\nContribution Guidelines\nTimezone Data Management\nData Sources and Updates\nMetadata and Verification\nDocumentation and Examples\nAPI Documentation\nUsage Examples\nLearning Exercises\nProject Governance\nContributors and Maintainers\nCONTRIBUTING.md\nchangelog.d/1424.bugfix.rst\nThis document provides a comprehensive overview of thedateutillibrary, a powerful Python package that extends the functionality of Python's standarddatetimemodule. Thedateutillibrary provides advanced date and time manipulation capabilities including flexible parsing, timezone handling, relative date arithmetic, and recurrence rule processing.\nFor detailed information about specific subsystems, seeCore Library Modules,Build System and Packaging,Development Workflow,Timezone Data Management, andDocumentation and Examples.\nPurpose and Capabilities\nThedateutillibrary serves as a comprehensive extension to Python's built-indatetimemodule, addressing limitations and providing advanced functionality for date and time operations. The library implements industry standards including ISO 8601 date parsing, iCalendar (RFC 5545) recurrence rules, and maintains an up-to-date timezone database based on the IANA Olson database.\nSources:README.rst42-86setup.cfg4-37\nCore Module Architecture\nThedateutillibrary is organized into six primary functional modules, each handling specific aspects of date and time manipulation:\nExternal StandardsCore Dependenciesdateutil Package Structuredateutil.parserDate/time string parsingdateutil.tzTimezone handlingdateutil.relativedeltaRelative date arithmeticdateutil.rruleRecurrence rulesdateutil.easterEaster date calculationdateutil.zoneinfoTimezone database managementdatetime modulePython standard librarysix libraryPython 2/3 compatibilityISO 8601Date/time format standardiCalendar RFC 5545Recurrence rulesIANA timezone databasetzdata\nExternal Standards\nCore Dependencies\ndateutil Package Structure\ndateutil.parserDate/time string parsing\ndateutil.tzTimezone handling\ndateutil.relativedeltaRelative date arithmetic\ndateutil.rruleRecurrence rules\ndateutil.easterEaster date calculation\ndateutil.zoneinfoTimezone database management\ndatetime modulePython standard library\nsix libraryPython 2/3 compatibility\nISO 8601Date/time format standard\niCalendar RFC 5545Recurrence rules\nIANA timezone databasetzdata\nSources:setup.cfg42README.rst68-86\nKey Functional Capabilities\ndateutil.parser\nParserError\ndateutil.tz\ndateutil.relativedelta\nrelativedelta\ndateutil.rrule\ndateutil.easter\ndateutil.zoneinfo\nZoneInfoFile\nSources:README.rst68-86NEWS23-27\nIntegration with Python datetime\nThedateutillibrary seamlessly extends Python'sdatetimemodule functionality while maintaining full compatibility with standarddatetimeobjects:\ndateutil ExtensionsPython Standard Librarydatetime.datetimedatetime.timedeltadatetime.tzinfodatetime.datedatetime.timeparser.parse()relativedeltatz.tzfile, tz.tzlocal, tz.tzutcrruleeaster()\ndateutil Extensions\nPython Standard Library\ndatetime.datetime\ndatetime.timedelta\ndatetime.tzinfo\ndatetime.date\ndatetime.time\nparser.parse()\nrelativedelta\ntz.tzfile, tz.tzlocal, tz.tzutc\nSources:README.rst42-43setup.py49-58\nStandards Compliance and Data Sources\nThedateutillibrary implements several international standards and maintains authoritative data sources:\nISO 8601: Complete implementation for date/time string parsing viadateutil.parser.isoparse()\ndateutil.parser.isoparse()\niCalendar (RFC 5545): Recurrence rule specification implementation indateutil.rrule\ndateutil.rrule\nIANA Timezone Database: Automated updates from official timezone database viaupdatezinfo.py\nupdatezinfo.py\nPlatform Integration: Windows registry timezone support, Unix/etc/localtimehandling\n/etc/localtime\nThe library supports Python versions 2.7 and 3.3+ with dual licensing under Apache 2.0 and BSD 3-Clause licenses for contributions after December 1, 2017.\nSources:setup.cfg45setup.cfg16-22README.rst160AUTHORS.md5-10\nDevelopment and Maintenance\nThedateutilproject maintains high code quality through comprehensive testing across multiple Python versions and platforms, automated continuous integration via GitHub Actions and Appveyor, and regular timezone data updates. The project usessetuptools_scmfor version management andtowncrierfor changelog generation.\nsetuptools_scm\nCurrent maintainership includes Paul Ganssle as the primary maintainer, with the project originally created by Gustavo Niemeyer in 2003.\nSources:setup.cfg8-10README.rst131-136setup.py50-52CONTRIBUTING.md31\nRefresh this wiki\nOn this page\nPurpose and Capabilities\nCore Module Architecture\nKey Functional Capabilities\nIntegration with Python datetime\nStandards Compliance and Data Sources\nDevelopment and Maintenance",
+    "model": "gpt-5",
+    "source": "selenium",
     "success": true
   },
   "deepwiki_options": {
     "enabled": true,
-    "model": "gpt-4o"
+    "model": "gpt-5"
   },
   "risk": {
-    "import_feasibility": 0.9,
+    "import_feasibility": 0.85,
     "intrusiveness_risk": "low",
-    "complexity": "simple"
+    "complexity": "medium"
   }
 }

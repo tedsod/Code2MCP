@@ -1,186 +1,155 @@
 import os
 import sys
 
-# Set path
+# Path settings
 source_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "source")
 sys.path.insert(0, source_path)
 
-# Import modules
-try:
-    from src.dateutil.parser import parse, isoparse
-    from src.dateutil.tz import gettz, tzutc, tzoffset, tzlocal, tzfile, tzwin, tzwinlocal
-    from src.dateutil.relativedelta import relativedelta
-    from src.dateutil.rrule import rrule, rruleset, rrulestr
-    from src.dateutil.easter import easter
-    from src.dateutil.utils import today, default_tzinfo
-    import_success = True
-except ImportError as e:
-    import_success = False
-    import_error = str(e)
+# Import statements
+from src.dateutil.relativedelta import relativedelta
+from src.dateutil.rrule import rrule, rruleset
+from src.dateutil.easter import easter
+from src.dateutil.zoneinfo import get_zonefile_instance, ZoneInfoFile
 
 class Adapter:
     """
-    MCP plugin Import mode adapter class.
-    Provides encapsulation of dateutil library core functionality, supporting date parsing, timezone handling, relative time calculation and other functions.
+    Adapter class for MCP plugin to integrate and utilize the functionalities of the dateutil library.
     """
 
     def __init__(self):
         """
-        Initialize adapter class.
-        Set mode to "import" and check module import status.
+        Initialize the Adapter class with default mode set to 'import'.
         """
         self.mode = "import"
-        if not import_success:
-            self.mode = "fallback"
-            self.error_message = f"Module import failed: {import_error}"
 
-    # ------------------------- Date Parsing Functions -------------------------
+    # -------------------------------------------------------------------------
+    # Instance Methods for Classes
+    # -------------------------------------------------------------------------
 
-    def parse_date(self, date_string, **kwargs):
+    def create_relativedelta_instance(self, **kwargs):
         """
-        Parse date string to datetime object.
+        Create an instance of the relativedelta class.
 
         Parameters:
-        - date_string (str): Date string to parse.
-        - kwargs: Other optional parameters.
+            kwargs: Keyword arguments for relativedelta initialization.
 
         Returns:
-        - dict: Dictionary containing parsing result or error information.
+            dict: A dictionary containing the status and the instance or error message.
         """
-        if self.mode == "fallback":
-            return {"status": "error", "message": "Parsing function unavailable, module import failed."}
         try:
-            result = parse(date_string, **kwargs)
-            return {"status": "success", "result": result}
+            instance = relativedelta(**kwargs)
+            return {"status": "success", "instance": instance}
         except Exception as e:
-            return {"status": "error", "message": f"Parsing failed: {str(e)}"}
+            return {"status": "error", "message": f"Failed to create relativedelta instance: {str(e)}"}
 
-    def parse_iso_date(self, iso_date_string):
+    def create_rrule_instance(self, **kwargs):
         """
-        Parse ISO 8601 format date string.
+        Create an instance of the rrule class.
 
         Parameters:
-        - iso_date_string (str): ISO 8601 format date string.
+            kwargs: Keyword arguments for rrule initialization.
 
         Returns:
-        - dict: Dictionary containing parsing result or error information.
+            dict: A dictionary containing the status and the instance or error message.
         """
-        if self.mode == "fallback":
-            return {"status": "error", "message": "ISO parsing function unavailable, module import failed."}
         try:
-            result = isoparse(iso_date_string)
-            return {"status": "success", "result": result}
+            instance = rrule(**kwargs)
+            return {"status": "success", "instance": instance}
         except Exception as e:
-            return {"status": "error", "message": f"ISO parsing failed: {str(e)}"}
+            return {"status": "error", "message": f"Failed to create rrule instance: {str(e)}"}
 
-    # ------------------------- Timezone Handling Functions -------------------------
-
-    def get_timezone(self, tz_name):
+    def create_rruleset_instance(self):
         """
-        Get timezone object by specified name.
+        Create an instance of the rruleset class.
+
+        Returns:
+            dict: A dictionary containing the status and the instance or error message.
+        """
+        try:
+            instance = rruleset()
+            return {"status": "success", "instance": instance}
+        except Exception as e:
+            return {"status": "error", "message": f"Failed to create rruleset instance: {str(e)}"}
+
+    def create_zoneinfofile_instance(self):
+        """
+        Create an instance of the ZoneInfoFile class.
+
+        Returns:
+            dict: A dictionary containing the status and the instance or error message.
+        """
+        try:
+            instance = ZoneInfoFile()
+            return {"status": "success", "instance": instance}
+        except Exception as e:
+            return {"status": "error", "message": f"Failed to create ZoneInfoFile instance: {str(e)}"}
+
+    # -------------------------------------------------------------------------
+    # Call Methods for Functions
+    # -------------------------------------------------------------------------
+
+    def call_easter(self, year):
+        """
+        Call the easter function to calculate the date of Easter Sunday for a given year.
 
         Parameters:
-        - tz_name (str): Timezone name.
+            year (int): The year for which to calculate Easter Sunday.
 
         Returns:
-        - dict: Dictionary containing timezone object or error information.
+            dict: A dictionary containing the status and the result or error message.
         """
-        if self.mode == "fallback":
-            return {"status": "error", "message": "Timezone function unavailable, module import failed."}
-        try:
-            result = gettz(tz_name)
-            return {"status": "success", "result": result}
-        except Exception as e:
-            return {"status": "error", "message": f"Failed to get timezone: {str(e)}"}
-
-    def get_utc_timezone(self):
-        """
-        Get UTC timezone object.
-
-        Returns:
-        - dict: Dictionary containing UTC timezone object or error information.
-        """
-        if self.mode == "fallback":
-            return {"status": "error", "message": "UTC timezone function unavailable, module import failed."}
-        try:
-            result = tzutc()
-            return {"status": "success", "result": result}
-        except Exception as e:
-            return {"status": "error", "message": f"Failed to get UTC timezone: {str(e)}"}
-
-    # ------------------------- Relative Time Calculation Functions -------------------------
-
-    def create_relativedelta(self, **kwargs):
-        """
-        Create a relative time object.
-
-        Parameters:
-        - kwargs: Parameters for relative time, such as years, months, days, etc.
-
-        Returns:
-        - dict: Dictionary containing relative time object or error information.
-        """
-        if self.mode == "fallback":
-            return {"status": "error", "message": "Relative time function unavailable, module import failed."}
-        try:
-            result = relativedelta(**kwargs)
-            return {"status": "success", "result": result}
-        except Exception as e:
-            return {"status": "error", "message": f"Failed to create relative time: {str(e)}"}
-
-    # ------------------------- Easter Date Calculation Functions -------------------------
-
-    def calculate_easter(self, year):
-        """
-        Calculate the date of Easter for a given year.
-
-        Parameters:
-        - year (int): Year.
-
-        Returns:
-        - dict: Dictionary containing Easter date or error information.
-        """
-        if self.mode == "fallback":
-            return {"status": "error", "message": "Easter calculation function unavailable, module import failed."}
         try:
             result = easter(year)
             return {"status": "success", "result": result}
         except Exception as e:
             return {"status": "error", "message": f"Failed to calculate Easter date: {str(e)}"}
 
-    # ------------------------- Repeating Rule Functions -------------------------
-
-    def create_rrule(self, **kwargs):
+    def call_get_zonefile_instance(self):
         """
-        Create a repeating rule object.
-
-        Parameters:
-        - kwargs: Parameters for repeating rules, such as freq, dtstart, interval, etc.
+        Call the get_zonefile_instance function to retrieve the timezone database instance.
 
         Returns:
-        - dict: Dictionary containing repeating rule object or error information.
+            dict: A dictionary containing the status and the result or error message.
         """
-        if self.mode == "fallback":
-            return {"status": "error", "message": "Repeating rule function unavailable, module import failed."}
         try:
-            result = rrule(**kwargs)
+            result = get_zonefile_instance()
             return {"status": "success", "result": result}
         except Exception as e:
-            return {"status": "error", "message": f"Failed to create repeating rule: {str(e)}"}
+            return {"status": "error", "message": f"Failed to retrieve timezone database instance: {str(e)}"}
 
-    # ------------------------- Auxiliary Tools Functions -------------------------
+    # -------------------------------------------------------------------------
+    # Error Handling and Fallback
+    # -------------------------------------------------------------------------
 
-    def get_today(self):
+    def handle_import_failure(self):
         """
-        Get current date.
+        Handle import failure gracefully by switching to fallback mode.
 
         Returns:
-        - dict: Dictionary containing current date or error information.
+            dict: A dictionary containing the status and fallback message.
         """
-        if self.mode == "fallback":
-            return {"status": "error", "message": "Get current date function unavailable, module import failed."}
-        try:
-            result = today()
-            return {"status": "success", "result": result}
-        except Exception as e:
-            return {"status": "error", "message": f"Failed to get current date: {str(e)}"}
+        self.mode = "fallback"
+        return {"status": "error", "message": "Import mode failed. Switching to fallback mode."}
+
+    # -------------------------------------------------------------------------
+    # Utility Methods
+    # -------------------------------------------------------------------------
+
+    def get_mode(self):
+        """
+        Retrieve the current mode of the adapter.
+
+        Returns:
+            dict: A dictionary containing the status and the current mode.
+        """
+        return {"status": "success", "mode": self.mode}
+
+    def reset_mode(self):
+        """
+        Reset the mode of the adapter to 'import'.
+
+        Returns:
+            dict: A dictionary containing the status and the updated mode.
+        """
+        self.mode = "import"
+        return {"status": "success", "mode": self.mode}

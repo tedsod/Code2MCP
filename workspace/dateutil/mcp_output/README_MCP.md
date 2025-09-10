@@ -1,146 +1,116 @@
-# dateutil Service (Model Context Protocol)
+# Dateutil MCP (Model Context Protocol) Service
 
-## Project Overview
+## Project Introduction
 
-`dateutil` is a powerful date and time processing service, extended from Python's `datetime` module, now adapted as an MCP (Model Context Protocol) service. It provides the following main features:
+The `dateutil` library is a powerful Python package that extends the functionality of Python's standard `datetime` module. It provides advanced date and time manipulation capabilities, including flexible parsing, timezone handling, relative date arithmetic, recurrence rule processing, and Easter date calculations. The library adheres to international standards such as ISO 8601 and iCalendar (RFC 5545) and maintains an up-to-date timezone database based on the IANA Olson database.
 
-- **Date Parsing**: Supports parsing of various date string formats, including ISO 8601 standard.
-- **Timezone Handling**: Supports timezone conversion and management.
-- **Relative Time Calculation**: Implements dynamic date calculations through `relativedelta` (such as adding or subtracting months, days, etc.).
-- **Recurrence Rules**: Supports event recurrence rules based on iCalendar standard.
-- **Special Date Calculations**: Such as Easter date calculation.
-- **Utility Tools**: Provides auxiliary utility functions for date and time.
+## Installation Method
 
-This service is suitable for various scenarios requiring efficient date and time processing, supporting cross-language and cross-platform calls.
+To install the `dateutil` MCP service, ensure you have Python 3.3+ installed. Use the following command to install via pip:
 
----
+```
+pip install python-dateutil
+```
 
-## Installation
-
-1. **Environment Dependencies**:
-   - Python version: 3.7 and above
-   - Required libraries: `six`, `pytz`, `setuptools`
-
-2. **Installation Command**:
-   Install using pip:
-   ```bash
-   pip install python-dateutil
-   ```
-
----
+### Dependencies:
+- Required: `datetime`, `six`
+- Optional: `tzdata` (for timezone database updates)
 
 ## Quick Start
 
-Here are examples of calling main functions:
+Here are examples of how to use the main functions provided by the `dateutil` MCP service:
 
-1. **Date Parsing**:
-   Use the `parser` service to parse date strings:
-   ```python
-   from dateutil.parser import parse
-   result = parse("2023-10-01")
-   ```
+### Parsing Dates
+Use the `parse` function to flexibly parse date/time strings:
+```
+from dateutil.parser import parse
+date = parse("2023-10-01")
+```
 
-2. **Timezone Handling**:
-   Use the `tz` service for timezone conversion:
-   ```python
-   from dateutil.tz import gettz
-   tz_info = gettz("Asia/Shanghai")
-   ```
+### Timezone Handling
+Retrieve timezone information using `gettz`:
+```
+from dateutil.tz import gettz
+timezone = gettz("America/New_York")
+```
 
-3. **Relative Time Calculation**:
-   Use the `relativedelta` service to calculate relative time:
-   ```python
-   from dateutil.relativedelta import relativedelta
-   new_date = current_date + relativedelta(months=+1)
-   ```
+### Relative Date Arithmetic
+Perform relative date calculations using `relativedelta`:
+```
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
+new_date = datetime.now() + relativedelta(months=+1)
+```
 
-4. **Recurrence Rules**:
-   Use the `rrule` service to generate event recurrence rules:
-   ```python
-   from dateutil.rrule import rrule, DAILY
-   rules = list(rrule(DAILY, count=5, dtstart=start_date))
-   ```
+### Recurrence Rules
+Generate recurrence rules using `rrule`:
+```
+from dateutil.rrule import rrule, DAILY
+from datetime import datetime
+rules = rrule(DAILY, count=5, dtstart=datetime(2023, 10, 1))
+```
 
-5. **Easter Date Calculation**:
-   Use the `easter` service to calculate Easter date:
-   ```python
-   from dateutil.easter import easter
-   easter_date = easter(2023)
-   ```
+### Easter Date Calculation
+Calculate Easter Sunday for a given year:
+```
+from dateutil.easter import easter
+easter_date = easter(2023)
+```
 
----
+### Timezone Database Updates
+Automate timezone database updates using the `updatezinfo` CLI tool:
+```
+python updatezinfo.py
+```
 
-## Available Tools and Endpoints
+## Available Tools and Endpoints List
 
-1. **Date Parsing Service**:
-   - Function: Parse various format date strings.
-   - Endpoint: `parser`
-   - Example: Parse ISO 8601 format dates.
+### Core Modules:
+1. **Parser (`dateutil.parser`)**  
+   Functions: `parse`, `isoparse`  
+   Description: Handles flexible date/time string parsing, including ISO 8601 compliance.
 
-2. **Timezone Handling Service**:
-   - Function: Provide timezone conversion and management.
-   - Endpoint: `tz`
-   - Example: Get specified timezone information.
+2. **Timezone Handling (`dateutil.tz`)**  
+   Functions: `gettz`, `tzfile`, `tzlocal`, `tzutc`  
+   Classes: `tzrange`, `tzoffset`  
+   Description: Provides timezone handling, including local timezone detection and UTC support.
 
-3. **Relative Time Calculation Service**:
-   - Function: Dynamically calculate relative changes in dates.
-   - Endpoint: `relativedelta`
-   - Example: Add or subtract specified time.
+3. **Relative Delta (`dateutil.relativedelta`)**  
+   Functions: `relativedelta`  
+   Classes: `relativedelta`  
+   Description: Implements relative date arithmetic for operations like adding months or years.
 
-4. **Recurrence Rules Service**:
-   - Function: Generate event recurrence rules based on iCalendar standard.
-   - Endpoint: `rrule`
-   - Example: Generate daily recurring events.
+4. **Recurrence Rules (`dateutil.rrule`)**  
+   Functions: `rrule`, `rruleset`, `rrulestr`  
+   Classes: `rrule`, `rruleset`  
+   Description: Handles recurrence rules based on iCalendar RFC 5545 specifications.
 
-5. **Easter Date Calculation Service**:
-   - Function: Calculate Easter date for a specified year.
-   - Endpoint: `easter`
-   - Example: Get Easter date.
+5. **Easter Calculation (`dateutil.easter`)**  
+   Functions: `easter`  
+   Description: Calculates the date of Easter Sunday for a given year.
 
-6. **Utility Tools Service**:
-   - Function: Provide auxiliary utility functions for date and time.
-   - Endpoint: `utils`
-   - Example: Get current date.
+6. **Timezone Database Management (`dateutil.zoneinfo`)**  
+   Functions: `get_zonefile_instance`, `rebuild`  
+   Classes: `ZoneInfoFile`  
+   Description: Manages timezone database updates and metadata verification.
 
----
+### CLI Tool:
+- **Update Timezone Database (`updatezinfo`)**  
+  Description: Automates updates to the timezone database using the IANA Olson database.
 
 ## Common Issues and Notes
 
-1. **Dependency Issues**:
-   - Ensure `six`, `pytz`, and `setuptools` dependency libraries are installed.
-   - Timezone data needs regular updates, recommend using the latest version of `pytz`.
+1. **Dependencies**: Ensure required dependencies (`datetime`, `six`) are installed. For timezone database updates, consider installing `tzdata`.
+2. **Environment**: The library supports Python 3.3+ and is compatible with Unix and Windows platforms.
+3. **Performance**: Parsing large datasets or complex recurrence rules may require optimization.
+4. **Timezone Updates**: Use the `updatezinfo` tool to keep the timezone database current.
+5. **Backward Compatibility**: The library supports Python 2.7 but is primarily optimized for Python 3.
 
-2. **Environment Requirements**:
-   - Compatible with Python 3.7 and above versions.
-   - When calling in multi-language environments, recommend integration through REST or gRPC interfaces.
+## Reference Links or Documentation
 
-3. **Performance Notes**:
-   - As a Python service, performance may not match native implementations in some languages (such as C++ or Java).
-   - For high-performance requirement scenarios, recommend optimizing service call frequency.
+- [GitHub Repository](https://github.com/dateutil/dateutil)
+- [Official Documentation](https://dateutil.readthedocs.io/en/stable/)
+- [Python Package Index (PyPI)](https://pypi.org/project/python-dateutil/)
+- [Contribution Guidelines](https://github.com/dateutil/dateutil/blob/master/CONTRIBUTING.md)
 
-4. **Timezone Data Management**:
-   - Timezone data needs regular synchronization updates to ensure service accuracy.
-
----
-
-## Reference Links and Documentation
-
-- Official Documentation: `https://dateutil.readthedocs.io/`
-- GitHub Repository: `https://github.com/dateutil/dateutil`
-- MCP (Model Context Protocol) Service Design Guide: Please refer to internal documentation or contact technical support.
-
----
-
-Through the above content, you can quickly get started and efficiently use the `dateutil` service (Model Context Protocol). For other questions, please refer to the official documentation or submit a support ticket.
-
----
-
-## Reference Links and Documentation
-
-- Official Documentation: `https://dateutil.readthedocs.io/`
-- GitHub Repository: `https://github.com/dateutil/dateutil`
-- MCP (Model Context Protocol) Service Design Guide: Please refer to internal documentation or contact technical support.
-
----
-
-Through the above content, you can quickly get started and efficiently use the `dateutil` service (Model Context Protocol). For other questions, please refer to the official documentation or submit a support ticket.
+For further details, refer to the official documentation and examples provided in the repository.
