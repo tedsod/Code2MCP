@@ -201,3 +201,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+workspace/Code2MCP-esm/esm/source/examples/lm-design/utils/ngram_stats/bigram_seg.p
+workspace/Code2MCP-esm/esm/source/examples/lm-design/utils/ngram_stats/monogram_seg.p
