@@ -104,7 +104,7 @@ async def main():
     elif provider == "claude":
         default_deepwiki_model = os.getenv("CLAUDE_MODEL", "claude-4-sonnet")
     else:
-        default_deepwiki_model = os.getenv("DEEPWIKI_MODEL", "gpt-5")
+        default_deepwiki_model = os.getenv("OPENAI_MODEL", "gpt-5")
     
     parser.add_argument("--deepwiki-model", default=default_deepwiki_model, help=f"DeepWiki model to use (default: {default_deepwiki_model})")
 
