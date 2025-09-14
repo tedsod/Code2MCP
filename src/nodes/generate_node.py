@@ -342,45 +342,45 @@ def {func}(*args, **kwargs):
             classes = module.get("classes", [])
             confidence = module.get("import_confidence", "medium")
         
-        if package:
-            if package.startswith("source."):
-                package = package[7:]  
-            
-            if module_name and module_name != package and not package.endswith(module_name):
-                import_path = f"{package}.{module_name}"
-            else:
-                import_path = package
-            
-            clean_functions = []
-            clean_classes = []
-            
-            for func in functions:
-                if func.endswith("*"):
-                    clean_functions.append(func[:-1])
+            if package:
+                if package.startswith("source."):
+                    package = package[7:]  
+                
+                if module_name and module_name != package and not package.endswith(module_name):
+                    import_path = f"{package}.{module_name}"
                 else:
-                    clean_functions.append(func)
-                    
-            for cls in classes:
-                if cls.endswith("*"):
-                    clean_classes.append(cls[:-1])
-                else:
-                    clean_classes.append(cls)
-            
-            all_items = list(set(clean_functions + clean_classes))
-            if all_items:
-                if confidence == "low":
-                    imports.append(f"# Note: Import paths may need adjustment")
-                    imports.append(f"try:")
-                    imports.append(f"    from {import_path} import {', '.join(all_items)}")
-                    imports.append(f"except ImportError as e:")
-                    imports.append(f"    # Import failed, path may need adjustment")
-                    imports.append(f"    print(f'Import warning: {{e}}')")
-                    imports.append(f"    {', '.join(all_items)} = None")
-                else:
-                    imports.append(f"from {import_path} import {', '.join(all_items)}")
-            
-            for func in clean_functions:
-                tools_code += f"""
+                    import_path = package
+                
+                clean_functions = []
+                clean_classes = []
+                
+                for func in functions:
+                    if func.endswith("*"):
+                        clean_functions.append(func[:-1])
+                    else:
+                        clean_functions.append(func)
+                        
+                for cls in classes:
+                    if cls.endswith("*"):
+                        clean_classes.append(cls[:-1])
+                    else:
+                        clean_classes.append(cls)
+                
+                all_items = list(set(clean_functions + clean_classes))
+                if all_items:
+                    if confidence == "low":
+                        imports.append(f"# Note: Import paths may need adjustment")
+                        imports.append(f"try:")
+                        imports.append(f"    from {import_path} import {', '.join(all_items)}")
+                        imports.append(f"except ImportError as e:")
+                        imports.append(f"    # Import failed, path may need adjustment")
+                        imports.append(f"    print(f'Import warning: {{e}}')")
+                        imports.append(f"    {', '.join(all_items)} = None")
+                    else:
+                        imports.append(f"from {import_path} import {', '.join(all_items)}")
+                
+                for func in clean_functions:
+                    tools_code += f"""
 @mcp.tool(name="{func}", description="{func} function")
 def {func}(*args, **kwargs):
     \"\"\"{func} function\"\"\"
@@ -422,9 +422,9 @@ def {func}(*args, **kwargs):
     except Exception as e:
         return {{"success": False, "result": None, "error": str(e)}}
 """
-            
-            for cls in clean_classes:
-                tools_code += f"""
+                
+                for cls in clean_classes:
+                    tools_code += f"""
 @mcp.tool(name="{cls.lower()}", description="{cls} class")
 def {cls.lower()}(*args, **kwargs):
     \"\"\"{cls} class\"\"\"
