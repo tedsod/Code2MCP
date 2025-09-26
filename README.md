@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-![Code2MCP Workflow Overview](overview.png)
+![Code2MCP Workflow Overview](figs/overview.png)
 
 Code2MCP is an automated workflow system that transforms existing code repositories into MCP (Model Context Protocol) services. The system follows a minimal intrusion principle, preserving the original repository's core code while only adding service-related files and tests.
 
@@ -64,32 +64,7 @@ python main.py https://github.com/username/repo --output ./my_output
 
 Complete structure for each converted project:
 
-```text
-workspace/
-└── {repo_name}/
-    ├── .git/                    # Original repository history
-    ├── source/                  # Original project source code (unchanged)
-    ├── mcp_output/              # Generated MCP service files
-    │   ├── start_mcp.py         # MCP service startup entry
-    │   ├── mcp_plugin/
-    │   │   ├── __init__.py      # Plugin package initialization
-    │   │   ├── main.py          # Plugin main entry
-    │   │   ├── mcp_service.py   # Core MCP service implementation
-    │   │   └── adapter.py       # Adapter implementation
-    │   ├── tests_mcp/
-    │   │   └── test_mcp_basic.py # Basic test files
-    │   ├── requirements.txt      # Dependency package list
-    │   ├── README_MCP.md        # Service documentation
-    │   ├── analysis.json        # Repository analysis results
-    │   ├── env_info.json        # Environment configuration info
-    │   ├── code_review_results.json # Code review results
-    │   ├── diff_report.md       # Difference report (Markdown)
-    │   ├── workflow_summary.json # Workflow summary
-    │   └── mcp_logs/            # Runtime logs directory
-    │       ├── run_log.json     # Runtime logs
-    │       └── llm_statistics.json # LLM call statistics
-    └── logs/                    # Workflow execution logs
-```
+![Output Structure](figs/Output-Structure.png)
 
 ## Successfully Converted Project Examples
 
@@ -114,6 +89,36 @@ workspace/
 ```bash
 python main.py https://github.com/username/repo
 ```
+
+## Using Converted MCP Services with Your AI Agent
+
+You can configure MCP services converted by Code2MCP for use in your AI agent (e.g., Cursor). Below are instructions and some examples to help you get started.
+
+### Example Pre-Converted MCP Services
+
+Here are a few examples you can use right away:
+
+-   **ESM**: For advanced protein analysis and structure prediction.
+    ```json
+    "esm": {
+      "url": "https://kabuda777-Code2MCP-esm.hf.space/mcp"
+    }
+    ```
+
+-   **SymPy**: For powerful symbolic and numerical mathematics.
+    ```json
+    "sympy": {
+      "url": "https://kabuda777-Code2MCP-sympy.hf.space/mcp"
+    }
+    ```
+
+### How to Configure in Cursor
+
+1.  **Open MCP Configuration File**: Navigate to your AI agent's configuration file. For Cursor, this is located at: `c:\Users\[Username]\.cursor\mcp.json`.
+
+2.  **Add Your New Tool**: In the `mcpServers` object, copy and paste the configuration snippet for the tool you want to add from the list above.
+
+3.  **Reload Configuration**: Restart Cursor or use its reload function to apply the changes. Your new MCP tool will now be available.
 
 -----
 
