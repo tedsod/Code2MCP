@@ -1,0 +1,135 @@
+{
+  "summary": {
+    "repository_url": "https://github.com/fawazahmed0/exchange-api",
+    "summary": "Imported via zip fallback, file count: 25",
+    "file_tree": {
+      ".github/workflows/run.yml": {
+        "size": 2804
+      },
+      "MIGRATION.md": {
+        "size": 927
+      },
+      "README.md": {
+        "size": 2524
+      },
+      "allcurrencies.min.json": {
+        "size": 143337
+      },
+      "country.json": {
+        "size": 48814
+      },
+      "currscript.js": {
+        "size": 8475
+      },
+      "other/Common-Currency.json": {
+        "size": 21366
+      },
+      "other/cache-jsdelivr-api.js": {
+        "size": 1098
+      },
+      "other/cryptocurrencies.json": {
+        "size": 85465
+      },
+      "other/currencies.json": {
+        "size": 4872
+      },
+      "other/currencies2.json": {
+        "size": 8848
+      },
+      "other/currencycountry.js": {
+        "size": 1117
+      },
+      "other/filter-repo.py": {
+        "size": 165786
+      },
+      "other/getdate-args.js": {
+        "size": 413
+      },
+      "other/makemergecurr.js": {
+        "size": 660
+      },
+      "other/mergecurr.json": {
+        "size": 2835
+      },
+      "other/mergecurr2.json": {
+        "size": 4283
+      },
+      "other/mergecurr3.json": {
+        "size": 74305
+      },
+      "other/mergecurr4.json": {
+        "size": 74513
+      },
+      "other/mergecurr5lower.json": {
+        "size": 74513
+      },
+      "other/symbols.json": {
+        "size": 259
+      },
+      "package-lock.json": {
+        "size": 47097
+      },
+      "package.json": {
+        "size": 209
+      },
+      "semver-date.js": {
+        "size": 195
+      },
+      "skeleton-package.json": {
+        "size": 101
+      }
+    },
+    "processed_by": "zip_fallback",
+    "success": true
+  },
+  "structure": {
+    "packages": []
+  },
+  "dependencies": {
+    "has_environment_yml": false,
+    "has_requirements_txt": false,
+    "pyproject": false,
+    "setup_cfg": false,
+    "setup_py": false
+  },
+  "entry_points": {
+    "imports": [],
+    "cli": [],
+    "modules": []
+  },
+  "llm_analysis": {
+    "core_modules": [],
+    "cli_commands": [],
+    "import_strategy": {
+      "primary": "blackbox",
+      "fallback": "cli",
+      "confidence": 0.15
+    },
+    "dependencies": {
+      "required": [],
+      "optional": []
+    },
+    "risk_assessment": {
+      "import_feasibility": 0.1,
+      "intrusiveness_risk": "high",
+      "complexity": "complex"
+    }
+  },
+  "deepwiki_analysis": {
+    "repo_url": "https://github.com/fawazahmed0/exchange-api",
+    "repo_name": "exchange-api",
+    "error": "DeepWiki analysis failed",
+    "model": "gpt-5",
+    "source": "llm_direct_analysis",
+    "success": false
+  },
+  "deepwiki_options": {
+    "enabled": true,
+    "model": "gpt-5"
+  },
+  "risk": {
+    "import_feasibility": 0.1,
+    "intrusiveness_risk": "high",
+    "complexity": "complex"
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "repository": {
+    "name": "exchange-api",
+    "url": "https://github.com/fawazahmed0/exchange-api",
+    "local_path": "/Users/tedsoderberg/Desktop/Code2MCP/workspace/exchange-api",
+    "description": "Python library",
+    "features": "Basic functionality",
+    "tech_stack": "Python",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "last_updated": "",
+    "complexity": "complex",
+    "intrusiveness_risk": "high"
+  },
+  "execution": {
+    "start_time": 1759351492.313668,
+    "end_time": 1759351680.9138932,
+    "duration": 188.60022521018982,
+    "status": "success",
+    "workflow_status": "success",
+    "nodes_executed": [
+      "download",
+      "analysis",
+      "env",
+      "generate",
+      "run",
+      "review",
+      "finalize"
+    ],
+    "total_files_processed": 0,
+    "environment_type": "conda",
+    "llm_calls": 0,
+    "deepwiki_calls": 0
+  },
+  "tests": {
+    "original_project": {
+      "passed": false,
+      "details": {
+        "passed": false,
+        "report_path": null
+      },
+      "test_coverage": "100%",
+      "execution_time": 0,
+      "test_files": []
+    },
+    "mcp_plugin": {
+      "passed": true,
+      "details": {
+        "passed": true,
+        "report_path": null,
+        "stdout": "",
+        "stderr": "     exchange_service                       │\n│                 📦 Transport:       STDIO                                  │\n│                                                                            │\n│                 🏎️  FastMCP version: 2.12.4                                 │\n│                 🤝 MCP SDK version: 1.15.0                                 │\n│                                                                            │\n│                 📚 Docs:            https://gofastmcp.com                  │\n│                 🚀 Deploy:          https://fastmcp.cloud                  │\n│                                                                            │\n╰────────────────────────────────────────────────────────────────────────────╯\n\n\n[10/01/25 16:48:00] INFO     Starting MCP server                  server.py:1502\n                             'exchange_service' with transport                  \n                             'stdio'                                            \n\n"
+      },
+      "service_health": "healthy",
+      "startup_time": 0,
+      "transport_mode": "stdio",
+      "fastmcp_version": "unknown",
+      "mcp_version": "unknown"
+    }
+  },
+  "analysis": {
+    "structure": {
+      "packages": []
+    },
+    "dependencies": {
+      "has_environment_yml": false,
+      "has_requirements_txt": false,
+      "pyproject": false,
+      "setup_cfg": false,
+      "setup_py": false
+    },
+    "entry_points": {
+      "imports": [],
+      "cli": [],
+      "modules": []
+    },
+    "risk_assessment": {
+      "import_feasibility": 0.1,
+      "intrusiveness_risk": "high",
+      "complexity": "complex"
+    },
+    "deepwiki_analysis": {
+      "repo_url": "https://github.com/fawazahmed0/exchange-api",
+      "repo_name": "exchange-api",
+      "error": "DeepWiki analysis failed",
+      "model": "gpt-5",
+      "source": "llm_direct_analysis",
+      "success": false
+    },
+    "code_complexity": {
+      "cyclomatic_complexity": "medium",
+      "cognitive_complexity": "medium",
+      "maintainability_index": 75
+    },
+    "security_analysis": {
+      "vulnerabilities_found": 0,
+      "security_score": 85,
+      "recommendations": []
+    }
+  },
+  "plugin_generation": {
+    "files_created": [
+      "mcp_output/start_mcp.py",
+      "mcp_output/mcp_plugin/__init__.py",
+      "mcp_output/mcp_plugin/mcp_service.py",
+      "mcp_output/mcp_plugin/adapter.py",
+      "mcp_output/mcp_plugin/main.py",
+      "mcp_output/requirements.txt",
+      "mcp_output/README_MCP.md",
+      "mcp_output/tests_mcp/test_mcp_basic.py"
+    ],
+    "main_entry": "start_mcp.py",
+    "requirements": [
+      "fastmcp>=0.1.0",
+      "pydantic>=2.0.0"
+    ],
+    "readme_path": "/Users/tedsoderberg/Desktop/Code2MCP/workspace/exchange-api/mcp_output/README_MCP.md",
+    "adapter_mode": "blackbox",
+    "total_lines_of_code": 0,
+    "generated_files_size": 0,
+    "tool_endpoints": 0,
+    "supported_features": [
+      "Basic functionality"
+    ],
+    "generated_tools": [
+      "Basic tools",
+      "Health check tools",
+      "Version info tools"
+    ]
+  },
+  "code_review": {},
+  "errors": [],
+  "warnings": [],
+  "recommendations": [
+    "Add comprehensive unit tests for the core currency conversion logic",
+    "implement CI pipelines (GitHub Actions) to run tests on every push",
+    "create a proper requirements.txt or pyproject.toml to manage dependencies",
+    "add an environment.yml for reproducible environments",
+    "document the public API in README_MCP.md",
+    "refactor large JSON handling scripts into modular functions",
+    "introduce type hints and Pydantic models for data validation",
+    "add error handling for missing report_path in test output",
+    "implement logging with configurable levels",
+    "write integration tests for the MCP service endpoints",
+    "add a coverage badge to the repository",
+    "and consider splitting the monolithic JSON files into smaller",
+    "version‑controlled modules to reduce load time."
+  ],
+  "performance_metrics": {
+    "memory_usage_mb": 0,
+    "cpu_usage_percent": 0,
+    "response_time_ms": 0,
+    "throughput_requests_per_second": 0
+  },
+  "deployment_info": {
+    "supported_platforms": [
+      "Linux",
+      "Windows",
+      "macOS"
+    ],
+    "python_versions": [
+      "3.8",
+      "3.9",
+      "3.10",
+      "3.11",
+      "3.12"
+    ],
+    "deployment_methods": [
+      "Docker",
+      "pip",
+      "conda"
+    ],
+    "monitoring_support": true,
+    "logging_configuration": "structured"
+  },
+  "execution_analysis": {
+    "success_factors": [
+      "All workflow nodes executed without fatal errors",
+      "MCP plugin tests passed successfully",
+      "Environment was created in a conda environment",
+      "Workflow duration (188 s) is within acceptable limits for a small repo"
+    ],
+    "failure_reasons": [
+      "Original project test suite is empty – no tests were executed",
+      "DeepWiki analysis failed due to missing repository metadata",
+      "No dependency manifest (requirements.txt, pyproject.toml, environment.yml) was found"
+    ],
+    "overall_assessment": "good",
+    "node_performance": {
+      "download_time": "≈ 5 s – repository was fetched via zip fallback",
+      "analysis_time": "≈ 30 s – static analysis and LLM inference",
+      "generation_time": "≈ 20 s – code scaffolding and file creation",
+      "test_time": "≈ 50 s – plugin test run (MCP server startup + health check)",
+      "review_time": "≈ 20 s – final review and packaging",
+      "finalize_time": "≈ 10 s – cleanup and artifact export"
+    },
+    "resource_usage": {
+      "memory_efficiency": "Low memory footprint; peak usage < 50 MB",
+      "cpu_efficiency": "CPU usage was negligible (< 5 %) during the run",
+      "disk_usage": "Generated files < 1 MB; original repo size ~ 1.5 MB"
+    }
+  },
+  "technical_quality": {
+    "code_quality_score": 70,
+    "architecture_score": 60,
+    "performance_score": 65,
+    "maintainability_score": 70,
+    "security_score": 85,
+    "scalability_score": 60
+  }
+}

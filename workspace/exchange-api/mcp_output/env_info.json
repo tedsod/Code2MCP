@@ -1,0 +1,15 @@
+{
+  "environment": {
+    "type": "conda",
+    "name": "exchange-api_351530_env",
+    "files": {},
+    "python": "3.10",
+    "exec_prefix": []
+  },
+  "original_tests": {
+    "passed": false,
+    "report_path": null
+  },
+  "timestamp": 1759351561.0432131,
+  "conda_available": true
+}
