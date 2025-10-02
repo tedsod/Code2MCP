@@ -2,7 +2,7 @@ import os
 import time
 import random
 import logging
-from typing import Optional, Dict, Any, Type
+from typing import Optional, Dict, Any, Type, Tuple
 from dataclasses import dataclass
 from pydantic import BaseModel
 from langchain.chat_models import init_chat_model
@@ -223,43 +223,44 @@ class LLMService:
         print(f"Average tokens per call: {stats['average_tokens']:.2f}\n")
         print("</LLM Service Statistics>")
 
-def get_model_config(provider: str = None) -> ModelConfig:
+def get_model_config(provider: str = None, model_version: Optional[str] = None) -> ModelConfig:
     try:
         from dotenv import load_dotenv
         load_dotenv()
     except ImportError:
         pass
-    
+
     if not provider:
         provider = os.getenv("MODEL_PROVIDER", "openai")
-    
+    provider = provider.lower()
+
     if provider == "openai":
         api_key = os.getenv("OPENAI_API_KEY")
         base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
-        model_version = os.getenv("OPENAI_MODEL", "gpt-5")
+        model_version = model_version or os.getenv("OPENAI_MODEL", "gpt-5")
     elif provider == "deepseek":
         api_key = os.getenv("DEEPSEEK_API_KEY")
         base_url = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
-        model_version = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+        model_version = model_version or os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
     elif provider == "qwen":
         api_key = os.getenv("QWEN_API_KEY")
         base_url = os.getenv("QWEN_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
-        model_version = os.getenv("QWEN_MODEL", "qwen-3")
+        model_version = model_version or os.getenv("QWEN_MODEL", "qwen-3")
     elif provider == "claude":
         api_key = os.getenv("CLAUDE_API_KEY")
         base_url = os.getenv("CLAUDE_BASE_URL", "https://api.anthropic.com")
-        model_version = os.getenv("CLAUDE_MODEL", "claude-4-sonnet")
+        model_version = model_version or os.getenv("CLAUDE_MODEL", "claude-4-sonnet")
     elif provider == "bedrock":
         api_key = os.getenv("AWS_ACCESS_KEY_ID")
         base_url = None
-        model_version = os.getenv("BEDROCK_MODEL", "anthropic.claude-4-sonnet")
+        model_version = model_version or os.getenv("BEDROCK_MODEL", "anthropic.claude-4-sonnet")
     elif provider == "ollama":
         api_key = None
         base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-        model_version = os.getenv("OLLAMA_MODEL", "llama2")
+        model_version = model_version or os.getenv("OLLAMA_MODEL", "llama2")
     else:
         raise ValueError(f"Unsupported model provider: {provider}")
-    
+
     if provider not in ["ollama"] and not api_key:
         raise ValueError(f"Environment variable {provider.upper()}_API_KEY not set")
     
@@ -274,21 +275,80 @@ def get_model_config(provider: str = None) -> ModelConfig:
         max_retries=int(os.getenv("MODEL_MAX_RETRIES", "10"))
     )
 
-_global_llm_service = None
+_LLM_SERVICE_CACHE: Dict[Tuple[str, str], LLMService] = {}
+_DEFAULT_LLM_KEY: Optional[Tuple[str, str]] = None
 
-def get_llm_service(provider: str = None) -> LLMService:
-    global _global_llm_service
-    
-    if _global_llm_service is None:
-        config = get_model_config(provider)
-        _global_llm_service = LLMService(config)
-    
-    return _global_llm_service
+
+def get_llm_service(provider: str = None, model_version: Optional[str] = None) -> LLMService:
+    """Return an LLM service configured for the given provider/model."""
+    global _DEFAULT_LLM_KEY
+
+    config = get_model_config(provider, model_version)
+    key: Tuple[str, str] = (config.provider.lower(), config.model_version)
+
+    service = _LLM_SERVICE_CACHE.get(key)
+    if service is None:
+        service = LLMService(config)
+        _LLM_SERVICE_CACHE[key] = service
+        logger.info(f"Initialized LLM service for provider={config.provider}, model={config.model_version}")
+
+    if provider is None and model_version is None and _DEFAULT_LLM_KEY is None:
+        _DEFAULT_LLM_KEY = key
+
+    return service
+
+
+def get_node_llm_service(node_name: str, state: Optional[Dict[str, Any]] = None) -> LLMService:
+    """Return an LLM service honoring per-node overrides from options or env vars."""
+    if not node_name:
+        return get_llm_service()
+
+    node_key = node_name.lower()
+    options: Dict[str, Any] = {}
+    if state and isinstance(state, dict):
+        options = state.get("options", {}) or {}
+
+    overrides = options.get("llm_overrides", {}) or {}
+
+    override = None
+    for candidate in (node_key, node_key.upper(), node_key.replace("-", "_")):
+        if candidate in overrides:
+            override = overrides[candidate]
+            break
+
+    provider_override: Optional[str] = None
+    model_override: Optional[str] = None
+
+    if isinstance(override, str):
+        model_override = override
+    elif isinstance(override, dict):
+        provider_override = override.get("provider") or override.get("model_provider")
+        model_override = override.get("model") or override.get("model_version")
+
+    #Get node specific llm from env vars
+    env_key = node_key.upper().replace("-", "_")
+    env_provider = os.getenv(f"MCP_{env_key}_PROVIDER")
+    env_model = os.getenv(f"MCP_{env_key}_MODEL")
+
+    provider = provider_override or env_provider
+    model = model_override or env_model
+
+    if provider:
+        provider = provider.lower()
+
+    if provider_override or model_override or env_provider or env_model:
+        logger.info(
+            "Using override LLM configuration for node %s: provider=%s model=%s",
+            node_name,
+            provider or "default",
+            model or "default",
+        )
+
+    return get_llm_service(provider=provider, model_version=model)
+
 
 def get_llm_statistics() -> dict:
-    global _global_llm_service
-    
-    if _global_llm_service is None:
+    if not _LLM_SERVICE_CACHE:
         return {
             "total_calls": 0,
             "failed_calls": 0,
@@ -298,10 +358,15 @@ def get_llm_statistics() -> dict:
             "total_tokens": 0,
             "average_prompt_tokens": 0,
             "average_completion_tokens": 0,
-            "average_tokens": 0
+            "average_tokens": 0,
         }
-    
-    return _global_llm_service.get_statistics()
+
+    if _DEFAULT_LLM_KEY and _DEFAULT_LLM_KEY in _LLM_SERVICE_CACHE:
+        service = _LLM_SERVICE_CACHE[_DEFAULT_LLM_KEY]
+    else:
+        service = next(iter(_LLM_SERVICE_CACHE.values()))
+
+    return service.get_statistics()
 
 def safe_module_name(name: str) -> str:
     safe_name = ''.join(c for c in name if c.isalnum() or c == '_')

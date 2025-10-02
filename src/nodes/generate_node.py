@@ -2,8 +2,8 @@
 from __future__ import annotations
 import os
 import time
-from typing import Dict, Any
-from ..utils import setup_logging, ensure_directory, write_file, get_llm_service
+from typing import Dict, Any, Optional
+from ..utils import setup_logging, ensure_directory, write_file, get_llm_service, get_node_llm_service
 
 logger = setup_logging()
 
@@ -129,9 +129,14 @@ def _detect_project_type(analysis_result: Dict[str, Any]) -> str:
         logger.warning(f"Project type detection failed: {e}")
         return "Unknown"
 
-def _generate_mcp_service(analysis_result: Dict[str, Any], retry_info: Dict[str, Any] = None, loop_summary: Dict[str, Any] | None = None) -> str:
+def _generate_mcp_service(
+    analysis_result: Dict[str, Any],
+    retry_info: Optional[Dict[str, Any]] = None,
+    loop_summary: Optional[Dict[str, Any]] = None,
+    llm_service=None,
+) -> str:
     try:
-        llm_service = get_llm_service()
+        llm_service = llm_service or get_llm_service()
         
         project_type = _detect_project_type(analysis_result)
         
@@ -540,10 +545,14 @@ if __name__ == "__main__":
     return content
 
 # Generate import mode adapter
-def _generate_adapter_import(analysis_result: Dict[str, Any], loop_summary: Dict[str, Any] | None = None) -> str:
+def _generate_adapter_import(
+    analysis_result: Dict[str, Any],
+    loop_summary: Optional[Dict[str, Any]] = None,
+    llm_service=None,
+) -> str:
     """Generate Import mode adapter code using LLM"""
     try:
-        llm_service = get_llm_service()
+        llm_service = llm_service or get_llm_service()
         
         system_prompt = """You are a professional Python code generation expert.
 
@@ -722,10 +731,14 @@ class Adapter:
 """
     return content
 
-def _generate_adapter_cli(analysis_result: Dict[str, Any], loop_summary: Dict[str, Any] | None = None) -> str:
+def _generate_adapter_cli(
+    analysis_result: Dict[str, Any],
+    loop_summary: Optional[Dict[str, Any]] = None,
+    llm_service=None,
+) -> str:
     """Generate CLI mode adapter code using LLM"""
     try:
-        llm_service = get_llm_service()
+        llm_service = llm_service or get_llm_service()
         
         system_prompt = """You are a professional Python code generation expert.
 
@@ -869,10 +882,14 @@ pydantic>=2.0.0
     return content
 
 
-def _generate_readme_mcp(analysis_result: Dict[str, Any], loop_summary: Dict[str, Any] | None = None) -> str:
+def _generate_readme_mcp(
+    analysis_result: Dict[str, Any],
+    loop_summary: Optional[Dict[str, Any]] = None,
+    llm_service=None,
+) -> str:
     """Generate README document using LLM"""
     try:
-        llm_service = get_llm_service()
+        llm_service = llm_service or get_llm_service()
         
         system_prompt = """You are a professional technical documentation writer.
 
@@ -1069,7 +1086,7 @@ def generate_node(state: Dict[str, Any]) -> Dict[str, Any]:
     
     llm_analysis = analysis.get("llm_analysis", {})
     core_modules = llm_analysis.get("core_modules", [])
-    
+
     for module in core_modules:
         package = module.get("package", "")
         if package and "src." in package:
@@ -1080,7 +1097,7 @@ def generate_node(state: Dict[str, Any]) -> Dict[str, Any]:
             break
     
     files = {}
-    
+
     mcp_py_path = os.path.join(mcp_output_dir, "start_mcp.py")
     write_file(mcp_py_path, _generate_mcp_py())
     files["mcp_output/start_mcp.py"] = mcp_py_path
@@ -1115,17 +1132,29 @@ def generate_node(state: Dict[str, Any]) -> Dict[str, Any]:
         }
     
     loop_summary = state.get("loop_summary")
-    write_file(service_path, _strip_code_fences(_generate_mcp_service(analysis_pruned, retry_info, loop_summary)))
+    llm_service = get_node_llm_service("generate", state)
+
+    write_file(
+        service_path,
+        _strip_code_fences(
+            _generate_mcp_service(
+                analysis_pruned,
+                retry_info,
+                loop_summary,
+                llm_service=llm_service,
+            )
+        ),
+    )
     files["mcp_output/mcp_plugin/mcp_service.py"] = service_path
-    
+
     adapter_path = os.path.join(mcp_plugin_dir, "adapter.py")
     if adapter_mode == "import":
-        adapter_content = _generate_adapter_import(analysis_pruned, loop_summary)
+        adapter_content = _generate_adapter_import(analysis_pruned, loop_summary, llm_service=llm_service)
     elif adapter_mode == "cli":
-        adapter_content = _generate_adapter_cli(analysis_pruned, loop_summary)
+        adapter_content = _generate_adapter_cli(analysis_pruned, loop_summary, llm_service=llm_service)
     else:
         adapter_content = _generate_adapter_blackbox(analysis_pruned)
-    
+
     write_file(adapter_path, _strip_code_fences(adapter_content))
     files["mcp_output/mcp_plugin/adapter.py"] = adapter_path
     
@@ -1154,7 +1183,10 @@ if __name__ == "__main__":
     
     readme_path = os.path.join(mcp_output_dir, "README_MCP.md")
     analysis["repository_name"] = repo.get("name", "unknown")
-    write_file(readme_path, _generate_readme_mcp(analysis_pruned, loop_summary))
+    write_file(
+        readme_path,
+        _generate_readme_mcp(analysis_pruned, loop_summary, llm_service=llm_service),
+    )
     files["mcp_output/README_MCP.md"] = readme_path
     
     test_basic_path = os.path.join(tests_mcp_dir, "test_mcp_basic.py")

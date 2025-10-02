@@ -84,6 +84,12 @@ ANALYSIS_MAX_FILE_TOKENS=2000
 # Minimum characters to retain
 ANALYSIS_MIN_CHARS=500
 
+# ==================== LLM specification for Nodes ====================
+MCP_ANALYSIS_PROVIDER=ollama
+MCP_ANALYSIS_MODEL=gpt-oss:20b
+MCP_GENERATE_PROVIDER=ollama
+MCP_GENERATE_MODEL=gpt-oss:20b
+
 # ==================== Usage Instructions ====================
 # 1. Copy this file to .env
 # 2. Set JINA_API_KEY (optional) for enhanced DeepWiki/web analysis

@@ -4,7 +4,7 @@ import json
 import os
 import re
 from typing import Dict, Any
-from ..utils import setup_logging, write_file, ensure_directory, get_llm_service
+from ..utils import setup_logging, write_file, ensure_directory, get_node_llm_service
 
 logger = setup_logging()
 
@@ -25,10 +25,8 @@ def _retry_generate_text(llm_service, user_prompt: str, system_prompt: str | Non
             delay = min(delay * 2, 4.0)
     return last
 
-def _intelligent_error_analysis(state: Dict[str, Any]) -> Dict[str, Any]:
+def _intelligent_error_analysis(state: Dict[str, Any], llm_service) -> Dict[str, Any]:
     try:
-        llm_service = get_llm_service()
-        
         run_result = state.get("run_result", {})
         if not run_result.get("success", False):
             state["fix_retry_count"] = 0
@@ -79,19 +77,17 @@ Please return JSON format analysis:
             logger.warning(f"Error analysis parsing failed: {e}")
         
         return {}
-        
+
     except Exception as e:
         logger.error(f"Error analysis failed: {e}")
         return {}
 
-def _apply_incremental_fixes(state: Dict[str, Any], error_analysis: Dict[str, Any]) -> bool:
+def _apply_incremental_fixes(state: Dict[str, Any], error_analysis: Dict[str, Any], llm_service) -> bool:
     try:
-        llm_service = get_llm_service()
-        
         run_result = state.get("run_result", {})
         error_message = run_result.get("error", "")
         stderr = run_result.get("stderr", "")
-        
+
         if not error_message and not stderr:
             return False
         
@@ -405,10 +401,11 @@ def review_node(state: Dict[str, Any]) -> Dict[str, Any]:
     ensure_directory(mcp_output_dir)
     
     run_result = state.get("run_result", {})
+    llm_service = get_node_llm_service("review", state)
     
     if not run_result.get("success", False):
         logger.info("Detected runtime error, starting deep error analysis...")
-        error_analysis = _intelligent_error_analysis(state)
+        error_analysis = _intelligent_error_analysis(state, llm_service)
         
         state["error_analysis"] = error_analysis
         
@@ -421,7 +418,7 @@ def review_node(state: Dict[str, Any]) -> Dict[str, Any]:
         next_action = error_analysis.get("next_action", "fix_directly")
 
         logger.info("Attempting to automatically fix...")
-        fix_success = _apply_incremental_fixes(state, error_analysis)
+        fix_success = _apply_incremental_fixes(state, error_analysis, llm_service)
         if fix_success:
             logger.info("Automatic fix successful!")
             state["fix_retry_count"] = 0

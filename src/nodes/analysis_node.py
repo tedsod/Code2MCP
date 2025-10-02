@@ -4,7 +4,7 @@ import os
 import json
 import re
 from typing import Dict, Any, List
-from ..utils import setup_logging, get_llm_service, write_file, fetch_deepwiki
+from ..utils import setup_logging, get_node_llm_service, write_file, fetch_deepwiki
 from ..tools.gitingest_client import GitingestClient
 from ..tools.deepwiki_client import get_deepwiki_client
 
@@ -349,7 +349,7 @@ def analysis_node(state: Dict[str, Any]) -> Dict[str, Any]:
         logger.error(f"Jina fetch failed: {e}")
     
     logger.info("Starting LLM service...")
-    llm_service = get_llm_service()
+    llm_service = get_node_llm_service("analysis", state)
     logger.info("LLM service obtained")
     
     logger.info("Starting LLM analysis...")

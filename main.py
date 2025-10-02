@@ -108,6 +108,16 @@ async def main():
     
     parser.add_argument("--deepwiki-model", default=default_deepwiki_model, help=f"DeepWiki model to use (default: {default_deepwiki_model})")
 
+    for node_name in ("analysis", "generate", "review", "finalize"):
+        parser.add_argument(
+            f"--{node_name}-provider",
+            help=f"LLM provider override for the {node_name} node",
+        )
+        parser.add_argument(
+            f"--{node_name}-model",
+            help=f"LLM model override for the {node_name} node",
+        )
+
     args = parser.parse_args()
     model_config = None
     if args.provider:
@@ -126,6 +136,18 @@ async def main():
         output_dir=str(output_dir), config=model_config
     )
 
+    llm_overrides = {}
+    for node_name in ("analysis", "generate", "review", "finalize"):
+        provider_override = getattr(args, f"{node_name}_provider", None)
+        model_override = getattr(args, f"{node_name}_model", None)
+        if provider_override or model_override:
+            override_entry = {}
+            if provider_override:
+                override_entry["provider"] = provider_override
+            if model_override:
+                override_entry["model"] = model_override
+            llm_overrides[node_name] = override_entry
+
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -136,6 +158,8 @@ async def main():
             workflow_options = {
                 "deepwiki_model": args.deepwiki_model,
             }
+            if llm_overrides:
+                workflow_options["llm_overrides"] = llm_overrides
             result = await orchestrator.run_workflow(args.repo_url, options=workflow_options)
             progress.update(task, completed=True)
             if result.get("success"):
